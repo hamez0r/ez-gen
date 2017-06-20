@@ -1,0 +1,11 @@
+{
+	"name": "MdefDataModelTests",
+	"type": "Static",
+	"dependencies": ["MdefDataModel", "MdefXml"],
+	"platform": "windows",
+	"runAfterBuild": "true",
+	"additionalCMakeCommands": [
+		"add_custom_target(runTest ALL COMMAND MdefDataModelTests)"
+
+	]
+}

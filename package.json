@@ -1,0 +1,33 @@
+{
+  "name": "ez-gen",
+  "version": "0.0.1",
+  "description": "Generates C++ projects from directory structure.",
+  "main": "main.js",
+  "scripts": {
+    "test": "mocha tests",
+    "coverage": "istanbul cover ./node_modules/.bin/_mocha -- -- -u exports -R spec test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hamez0r/ez-gen.git"
+  },
+  "keywords": [
+    "C++",
+    "Project",
+    "Generator",
+    "CMake",
+    "directory",
+    "structure"
+  ],
+  "author": "Andrei Epure, Alina Zagan, Dragos Mihai",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hamez0r/ez-gen/issues"
+  },
+  "homepage": "https://github.com/hamez0r/ez-gen#readme",
+  "devDependencies": {
+    "chai": "^4.0.2",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.4.2"
+  }
+}
