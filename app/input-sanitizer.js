@@ -1,29 +1,36 @@
 'use strict';
 
-function InputSanitizer(projects) {
+function InputSanitizer(projects, platform) {
   this.sanitizer = new Sanitizer(projects)
 }
 
 InputSanitizer.prototype = {
   sanitize: function() {
-    this.sanitizer.sanitize()
+    return this.sanitizer.sanitize()
   }
 }
 
 /* Internal */
 
-function Sanitizer(projects) {
+function Sanitizer(projects, platform) {
   this.projects = projects
+  this.platform = platform
 }
 
 Sanitizer.prototype = {
   sanitize: function() {
-    
+    this.checkNonEmptyNames(this.projects)
+
+    let namesToProjectDirs = this.mapNamesToProjectDirs(this.projects)
+    this.checkDuplicateNames(namesToProjectDirs)
+
+    this.projects = this.keepProjectsTargetingPlatform(this.projects, 
+      this.platform)
   },
 
-  removeOtherPlatforms: function(projects) {
+  keepProjectsTargetingPlatform: function(projects, platform) {
     return projects.filter(function(project) {
-      return platforms.has(project.platform)
+      return project.platform === platform
     })
   },
 

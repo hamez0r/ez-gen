@@ -1,6 +1,7 @@
 'use strict';
 
-let expect = require('chai').expect
+let chai = require('chai')
+let expect = chai.expect
 let Project = require('../app/project').Project
 let Sanitizer = require('../app/input-sanitizer').Sanitizer
 
@@ -14,7 +15,6 @@ function createProjectsWithEmptyNames() {
     "runAfterBuild": "true",
     "additionalCMakeCommands": [
       "add_custom_target(runTest ALL COMMAND MdefDataModelTests)",
-
     ]
   }, 'somePath'))
   projects.push(new Project({
@@ -25,7 +25,6 @@ function createProjectsWithEmptyNames() {
     "runAfterBuild": "true",
     "additionalCMakeCommands": [
       "add_custom_target(runTest ALL COMMAND MdefDataModelTests)",
-
     ]
   }, 'somePath'))
 
@@ -42,7 +41,6 @@ function createProjectsWithDifferentNames() {
     "runAfterBuild": "true",
     "additionalCMakeCommands": [
       "add_custom_target(runTest ALL COMMAND MdefDataModelTests)",
-
     ]
   }, 'F:/A/'))
   projects.push(new Project({
@@ -53,7 +51,6 @@ function createProjectsWithDifferentNames() {
     "runAfterBuild": "true",
     "additionalCMakeCommands": [
       "add_custom_target(runTest ALL COMMAND MdefDataModelTests)",
-
     ]
   }, 'F:/B/'))
 
@@ -70,7 +67,6 @@ function createProjectsWithSameNames() {
     "runAfterBuild": "true",
     "additionalCMakeCommands": [
       "add_custom_target(runTest ALL COMMAND MdefDataModelTests)",
-
     ]
   }, 'F:/A/'))
   projects.push(new Project({
@@ -81,7 +77,33 @@ function createProjectsWithSameNames() {
     "runAfterBuild": "true",
     "additionalCMakeCommands": [
       "add_custom_target(runTest ALL COMMAND MdefDataModelTests)",
+    ]
+  }, 'F:/B/'))
 
+  return projects 
+}
+
+function createProjectsWithDifferentPlatforms() {
+  let projects = []
+  projects.push(new Project({
+    "name": "MdefDataModel",
+    "type": "Static",
+    "dependencies": ["MdefDataModel", "MdefXml"],
+    "platform": "linux",
+    "runAfterBuild": "true",
+    "additionalCMakeCommands": [
+      "add_custom_target(runTest ALL COMMAND MdefDataModelTests)",
+
+    ]
+  }, 'F:/A/'))
+  projects.push(new Project({
+    "name": "MdefDataModelTests",
+    "type": "Static",
+    "dependencies": ["MdefDataModel", "MdefXml"],
+    "platform": "win32",
+    "runAfterBuild": "true",
+    "additionalCMakeCommands": [
+      "add_custom_target(runTest ALL COMMAND MdefDataModelTests)",
     ]
   }, 'F:/B/'))
 
@@ -145,5 +167,24 @@ describe('Sanitizer', function() {
     reference.set('MdefDataModel', ['F:/A/', 'F:/B/'])
 
     expect(nameToProjectDirs).to.deep.equal(reference)
+  })
+
+  it('keepProjectsTargetingPlatform() should get rid of projects that should not be included on the specified platform', function() {
+    let projects = createProjectsWithDifferentPlatforms()
+    let sanitizer = new Sanitizer()
+    projects = sanitizer.keepProjectsTargetingPlatform(projects, 'linux')
+
+    let reference = [new Project({
+      "name": "MdefDataModel",
+      "type": "Static",
+      "dependencies": ["MdefDataModel", "MdefXml"],
+      "platform": "linux",
+      "runAfterBuild": "true",
+      "additionalCMakeCommands": [
+        "add_custom_target(runTest ALL COMMAND MdefDataModelTests)",
+      ]
+    }, 'F:/A/')]
+
+    expect(projects).to.deep.equal(reference)
   })
 })
