@@ -315,11 +315,10 @@ describe('AppTranslator', function() {
     }
 
     let projects = createProjectsWithDifferentNames()
-    let translator = new AppTranslator(fileSystemMock)
-    let contents = translator.translateProject(project[0])
+    let translator = new AppTranslator(null, fileSystemMock. null) // add cmakeFormatter
+    let contents = translator.translateProject(projects[0])
 
-    let reference = `
-cmake_minimum_required(VERSION 2.8)
+    let reference = `cmake_minimum_required(VERSION 2.8)
 project(MdefDataModel)
 include_directories("F:/B/Public")
 include_directories("F:/B/Public/Xerces")
@@ -360,39 +359,42 @@ file(GLOB PublicLocal_C "F:/A/Public/Local/*.c")
 file(GLOB PublicLocal_CC "F:/A/Public/Local/*.cc")
 file(GLOB PublicLocal_CPP "F:/A/Public/Local/*.cpp")
 file(GLOB PublicLocal_CXX "F:/A/Public/Local/*.cxx")
-source_group("Public" FILES ${Public_H} ${Public_HH} ${Public_HPP} ${Public_HXX} ${Public_C} ${Public_CC} ${Public_CPP} ${Public_CXX})
-source_group("Private" FILES ${Private_H} ${Private_HH} ${Private_HPP} ${Private_HXX} ${Private_C} ${Private_CC} ${Private_CPP} ${Private_CXX})
-source_group("Public\\\\Local" FILES ${PublicLocal_H} ${PublicLocal_HH} ${PublicLocal_HPP} ${PublicLocal_HXX} ${PublicLocal_C} ${PublicLocal_CC} ${PublicLocal_CPP} ${PublicLocal_CXX})
-source_group("Public\\\\Api" FILES ${PublicApi_H} ${PublicApi_HH} ${PublicApi_HPP} ${PublicApi_HXX} ${PublicApi_C} ${PublicApi_CC} ${PublicApi_CPP} ${PublicApi_CXX})
+source_group("Public" FILES \${Public_H} \${Public_HH} \${Public_HPP} \${Public_HXX} \${Public_C} \${Public_CC} \${Public_CPP} \${Public_CXX})
+source_group("Private" FILES \${Private_H} \${Private_HH} \${Private_HPP} \${Private_HXX} \${Private_C} \${Private_CC} \${Private_CPP} \${Private_CXX})
+source_group("Public\\\\Local" FILES \${PublicLocal_H} \${PublicLocal_HH} \${PublicLocal_HPP} \${PublicLocal_HXX} \${PublicLocal_C} \${PublicLocal_CC} \${PublicLocal_CPP} \${PublicLocal_CXX})
+source_group("Public\\\\Api" FILES \${PublicApi_H} \${PublicApi_HH} \${PublicApi_HPP} \${PublicApi_HXX} \${PublicApi_C} \${PublicApi_CC} \${PublicApi_CPP} \${PublicApi_CXX})
 target_link_libraries(MdefDataModel MdefXml)
 add_library(MdefDataModel STATIC
-    ${PUBLIC_H}
-    ${Public_HH}
-    ${Public_HPP}
-    ${Public_HXX}
-    ${Public_C}
-    ${Public_CC}
-    ${Public_CPP}
-    ${Public_CXX}
-    ${Private_H}
-    ${Private_HH}
-    ${Private_HPP}
-    ${Private_HXX}
-    ${PublicApi_H}
-    ${PublicApi_HH}
-    ${PublicApi_HPP}
-    ${PublicApi_HXX}
-    ${PublicApi_C}
-    ${PublicApi_CC}
-    ${PublicApi_CPP}
-    ${PublicApi_CXX}
-    ${PublicLocal_H}
-    ${PublicLocal_HH}
-    ${PublicLocal_HPP}
-    ${PublicLocal_HXX}
-    ${PublicLocal_C}
-    ${PublicLocal_CC}
-    ${PublicLocal_CPP}
-    ${PublicLocal_CXX})`
+    \${PUBLIC_H}
+    \${Public_HH}
+    \${Public_HPP}
+    \${Public_HXX}
+    \${Public_C}
+    \${Public_CC}
+    \${Public_CPP}
+    \${Public_CXX}
+    \${Private_H}
+    \${Private_HH}
+    \${Private_HPP}
+    \${Private_HXX}
+    \${PublicApi_H}
+    \${PublicApi_HH}
+    \${PublicApi_HPP}
+    \${PublicApi_HXX}
+    \${PublicApi_C}
+    \${PublicApi_CC}
+    \${PublicApi_CPP}
+    \${PublicApi_CXX}
+    \${PublicLocal_H}
+    \${PublicLocal_HH}
+    \${PublicLocal_HPP}
+    \${PublicLocal_HXX}
+    \${PublicLocal_C}
+    \${PublicLocal_CC}
+    \${PublicLocal_CPP}
+    \${PublicLocal_CXX})`
+
+  expect(contents).to.deep.equal(reference)
   })
+
 })
