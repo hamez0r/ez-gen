@@ -17,7 +17,7 @@ FileSystem.prototype = {
       let fullFilePath = path.join(startDir, file)
       if (fs.statSync(fullFilePath).isDirectory()) {
         subDirs.push(fullFilePath)
-        subDirs = subDirs.concat(listAllSubDirs(fullFilePath))
+        subDirs = subDirs.concat(this.listAllSubDirs(fullFilePath))
       }
     }
 
@@ -91,6 +91,8 @@ function readDirRecursive(startDir) {
 
   return files
 }
+
+//console.log(new FileSystem().listAllSubDirs('F:/Workdir/UnitTestsTry/Client'))
 
 module.exports = {
   FileSystem: FileSystem

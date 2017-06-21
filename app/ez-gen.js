@@ -35,7 +35,7 @@ EzGen.prototype = {
       projectsValidator.validate()
 
       let appConfig = JSON.parse(fs.readAppFile(appDir))
-      let app = new App(appConfig, appProjects, appDir))
+      let app = new App(appConfig, appProjects, appDir)
 
       apps.push(app)
     }

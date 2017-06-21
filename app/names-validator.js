@@ -52,7 +52,7 @@ Validator.prototype = {
   // all entities have name
   //
   // returns:
-  // Map (name - [projectDirs]) 
+  // Map (name - [paths]) 
   mapNamesToPaths: function(entities) {
     let nameToPaths = new Map()
 

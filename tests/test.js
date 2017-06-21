@@ -5,6 +5,7 @@ let expect = chai.expect
 let Project = require('../app/project').Project
 let ProjectsSanitizer = require('../app/projects-sanitizer').Sanitizer
 let NamesValidator = require('../app/names-validator').Validator
+let ProjectsValidator = require('../app/projects-validator').Validator
 
 function createProjectsWithEmptyNames() {
   let projects = []
@@ -37,22 +38,13 @@ function createProjectsWithDifferentNames() {
   projects.push(new Project({
     "name": "MdefDataModel",
     "type": "Static",
-    "dependencies": ["MdefDataModel", "MdefXml"],
+    "dependencies": ["MdefXml"],
     "platform": "win32",
-    "runAfterBuild": "true",
-    "additionalCMakeCommands": [
-      "add_custom_target(runTest ALL COMMAND MdefDataModelTests)",
-    ]
   }, 'F:/A/'))
   projects.push(new Project({
-    "name": "MdefDataModelTests",
+    "name": "MdefXml",
     "type": "Static",
-    "dependencies": ["MdefDataModel", "MdefXml"],
     "platform": "win32",
-    "runAfterBuild": "true",
-    "additionalCMakeCommands": [
-      "add_custom_target(runTest ALL COMMAND MdefDataModelTests)",
-    ]
   }, 'F:/B/'))
 
   return projects 
@@ -121,6 +113,69 @@ function createProjectsWithDifferentPlatforms() {
   return projects 
 }
 
+function createProjectsWithCorrectDependencies() {
+  let projects = []
+  projects.push(new Project({
+    "name": "MdefDataModel",
+    "type": "Static",
+    "dependencies": ["MdefXml"],
+    "platform": "linux",
+    "runAfterBuild": "true",
+    "additionalCMakeCommands": [
+      "add_custom_target(runTest ALL COMMAND MdefDataModelTests)",
+
+    ]
+  }, 'F:/A/'))
+  projects.push(new Project({
+    "name": "MdefSerializer",
+    "type": "Static",
+    "dependencies": ["MdefDataModel", "MdefXml"],
+    "platform": "win32",
+    "runAfterBuild": "true",
+    "additionalCMakeCommands": [
+      "add_custom_target(runTest ALL COMMAND MdefDataModelTests)",
+    ]
+  }, 'F:/B/'))
+  projects.push(new Project({
+    "name": "MdefXml",
+    "type": "Static",
+    "platform": "all",
+    "runAfterBuild": "true",
+    "additionalCMakeCommands": [
+      "add_custom_target(runTest ALL COMMAND MdefDataModelTests)",
+    ]
+  }, 'F:/C/'))
+
+  return projects 
+}
+
+function createProjectsWithIncorrectDependencies() {
+  let projects = []
+  projects.push(new Project({
+    "name": "MdefDataModel",
+    "type": "Static",
+    "dependencies": ["MdefXml"],
+    "platform": "linux",
+    "runAfterBuild": "true",
+    "additionalCMakeCommands": [
+      "add_custom_target(runTest ALL COMMAND MdefDataModelTests)",
+
+    ]
+  }, 'F:/A/'))
+  projects.push(new Project({
+    "name": "MdefSerializer",
+    "type": "Static",
+    "dependencies": ["MdefDataModel", "MdefXml"],
+    "platform": "win32",
+    "runAfterBuild": "true",
+    "additionalCMakeCommands": [
+      "add_custom_target(runTest ALL COMMAND MdefDataModelTests)",
+    ]
+  }, 'F:/B/'))
+
+  return projects 
+}
+
 describe('NamesValidator', function() {
   it('checkDuplicateNames() should not throw error, because names are different', function() {
     let namesToProjectDirs = new Map()
@@ -164,7 +219,7 @@ describe('NamesValidator', function() {
 
     let reference = new Map()
     reference.set('MdefDataModel', ['F:/A/'])
-    reference.set('MdefDataModelTests', ['F:/B/'])
+    reference.set('MdefXml', ['F:/B/'])
 
     expect(nameToProjectDirs).to.deep.equal(reference)
   })
@@ -214,6 +269,100 @@ describe('ProjectsSanitizer', function() {
   })
 })
 
-describe('AppsValidator', function() {
+describe('ProjectsValidator', function() {
+  it('checkDependencies() should not throw becase the dependency exists', function() {
+    let projects = createProjectsWithCorrectDependencies()
+    let validator = new ProjectsValidator()
 
+    expect(validator.checkDependencies.bind(validator, projects[1], projects)).to.not.throw()
+  })
+
+  it('checkDependencies() should throw because a dependency is missing', function() {
+    let projects = createProjectsWithIncorrectDependencies()
+    let validator = new ProjectsValidator()
+
+    expect(validator.checkDependencies.bind(validator, projects[0], projects)).to.throw()
+  })
+
+  it('hasProject() should return false because it didn\'t find the specified project', function() {
+    let projects = createProjectsWithDifferentNames()
+    let validator = new ProjectsValidator()
+    let found = validator.hasProject('MdefSolve', projects)
+
+    expect(found).to.be.false
+  })
+
+  it('hasProject() should return true because it found the specified project', function() {
+    let projects = createProjectsWithDifferentNames()
+    let validator = new ProjectsValidator()
+    let found = validator.hasProject('MdefDataModel', projects)
+
+    expect(found).to.be.true
+  })
+})
+
+describe('AppTranslator', function() {
+  it('translateProject() should return the contents of a CMakeLists.txt for a given project', function() {
+    let fileSystemMock = {
+      listAllSubdirs: function(startDir) {
+        if (startDir === 'F:/B/Public')
+          return ['F:/B/Public/Xerces', 'F:/B/Public/Tokens']
+        else if (startDir === 'F:/A/')
+          return ['F:/A/Public/', 'F:/A/Private/', 'F:/A/Public/Api', 'F:/A/Public/Local']
+        else throw 'Not properly used mock'
+      },
+    }
+
+    let projects = createProjectsWithDifferentNames()
+    let translator = new AppTranslator(fileSystemMock)
+    let contents = translator.translateProject(project[0])
+
+    let reference = '\
+cmake_minimum_required(VERSION 2.8)\
+project(MdefDataModel)\
+include_directories("F:/B/Public")\
+include_directories("F:/B/Public/Xerces")\
+include_directories("F:/B/Public/Tokens")\
+include_directories("F:/A/Public/")\
+include_directories("F:/A/Public/Api")\
+include_directories("F:/A/Public/Local")\
+include_directories("F:/A/Private/")\
+file(GLOB Public_H "F:/A/Public/*.h")\
+file(GLOB Public_HH "F:/A/Public/*.hh")\
+file(GLOB Public_HPP "F:/A/Public/*.hpp")\
+file(GLOB Public_HXX "F:/A/Public/*.hxx")\
+file(GLOB Public_C "F:/A/Public/*.c")\
+file(GLOB Public_CC "F:/A/Public/*.cc")\
+file(GLOB Public_CPP "F:/A/Public/*.cpp")\
+file(GLOB Public_CXX "F:/A/Public/*.cxx")\
+source_group("Public" FILES ${Public_H} ${Public_HH} ${Public_HPP} ${Public_HXX} ${Public_C} ${Public_CC} ${Public_CPP} ${Public_CXX})\
+file(GLOB Private_H "F:/A/Private/*.h")\
+file(GLOB Private_HH "F:/A/Private/*.hh")\
+file(GLOB Private_HPP "F:/A/Private/*.hpp")\
+file(GLOB Private_HXX "F:/A/Private/*.hxx")\
+file(GLOB Private_C "F:/A/Private/*.c")\
+file(GLOB Private_CC "F:/A/Private/*.cc")\
+file(GLOB Private_CPP "F:/A/Private/*.cpp")\
+file(GLOB Private_CXX "F:/A/Private/*.cxx")\
+source_group("Private" FILES ${Private_H} ${Private_HH} ${Private_HPP} ${Private_HXX} ${Private_C} ${Private_CC} ${Private_CPP} ${Private_CXX})\
+file(GLOB PublicApi_H "F:/A/Public/Api/*.h")\
+file(GLOB PublicApi_HH "F:/A/Public/Api/*.hh")\
+file(GLOB PublicApi_HPP "F:/A/Public/Api/*.hpp")\
+file(GLOB PublicApi_HXX "F:/A/Public/Api/*.hxx")\
+file(GLOB PublicApi_C "F:/A/Public/Api/*.c")\
+file(GLOB PublicApi_CC "F:/A/Public/Api/*.cc")\
+file(GLOB PublicApi_CPP "F:/A/Public/Api/*.cpp")\
+file(GLOB PublicApi_CXX "F:/A/Public/Api/*.cxx")\
+source_group("Public\\\\Api" FILES ${PublicApi_H} ${PublicApi_HH} ${PublicApi_HPP} ${PublicApi_HXX} ${PublicApi_C} ${PublicApi_CC} ${PublicApi_CPP} ${PublicApi_CXX})\
+file(GLOB PublicLocal_H "F:/A/Public/Local/*.h")\
+file(GLOB PublicLocal_HH "F:/A/Public/Local/*.hh")\
+file(GLOB PublicLocal_HPP "F:/A/Public/Local/*.hpp")\
+file(GLOB PublicLocal_HXX "F:/A/Public/Local/*.hxx")\
+file(GLOB PublicLocal_C "F:/A/Public/Local/*.c")\
+file(GLOB PublicLocal_CC "F:/A/Public/Local/*.cc")\
+file(GLOB PublicLocal_CPP "F:/A/Public/Local/*.cpp")\
+file(GLOB PublicLocal_CXX "F:/A/Public/Local/*.cxx")\
+source_group("Public\\\\Local" FILES ${PublicLocal_H} ${PublicLocal_HH} ${PublicLocal_HPP} ${PublicLocal_HXX} ${PublicLocal_C} ${PublicLocal_CC} ${PublicLocal_CPP} ${PublicLocal_CXX})\
+    '
+  })
 })
