@@ -4,7 +4,7 @@ let chai = require('chai')
 let expect = chai.expect
 let Project = require('../app/project').Project
 let ProjectsSanitizer = require('../app/projects-sanitizer').Sanitizer
-let ProjectsValidator = require('../app/projects-validator').Validator
+let NamesValidator = require('../app/names-validator').Validator
 
 function createProjectsWithEmptyNames() {
   let projects = []
@@ -121,13 +121,13 @@ function createProjectsWithDifferentPlatforms() {
   return projects 
 }
 
-describe('ProjectsValidator', function() {
+describe('NamesValidator', function() {
   it('checkDuplicateNames() should not throw error, because names are different', function() {
     let namesToProjectDirs = new Map()
     namesToProjectDirs.set('MdefToolkit', ['F:/A/'])
     namesToProjectDirs.set('MdefApplication', ['F:/B/'])
 
-    let validator = new ProjectsValidator()
+    let validator = new NamesValidator()
     expect(validator.checkDuplicateNames.bind(validator, namesToProjectDirs))
       .to.not.throw()
   })
@@ -136,14 +136,14 @@ describe('ProjectsValidator', function() {
     let namesToProjectDirs = new Map()
     namesToProjectDirs.set('MdefToolkit', ['F:/A/', 'F:/B/'])
 
-    let validator = new ProjectsValidator()
+    let validator = new NamesValidator()
     expect(validator.checkDuplicateNames.bind(validator, namesToProjectDirs))
       .to.throw()
   })
 
   it('checkNonEmptyNames() should not throw, because names are not empty', function() {
     let projects = createProjectsWithDifferentNames()
-    let validator = new ProjectsValidator()
+    let validator = new NamesValidator()
 
     expect(validator.checkNonEmptyNames.bind(validator, projects))
       .to.not.throw()
@@ -151,16 +151,16 @@ describe('ProjectsValidator', function() {
 
   it('checkNonEmptyNames() should throw, because some names are empty', function() {
     let projects = createProjectsWithEmptyNames()
-    let validator = new ProjectsValidator()
+    let validator = new NamesValidator()
 
     expect(validator.checkNonEmptyNames.bind(validator, projects))
       .to.throw()
   })
 
-  it('mapNamesToProjectDirs() should map 1 to 1', function() {
+  it('mapNamesToPaths() should map 1 to 1', function() {
     let projects = createProjectsWithDifferentNames()
-    let validator = new ProjectsValidator()
-    let nameToProjectDirs = validator.mapNamesToProjectDirs(projects)
+    let validator = new NamesValidator()
+    let nameToProjectDirs = validator.mapNamesToPaths(projects)
 
     let reference = new Map()
     reference.set('MdefDataModel', ['F:/A/'])
@@ -169,10 +169,10 @@ describe('ProjectsValidator', function() {
     expect(nameToProjectDirs).to.deep.equal(reference)
   })
 
-  it('mapNamesToProjectDirs() should map 1 to 1 with duplicate names', function() {
+  it('mapNamesToPaths() should map 1 to 1 with duplicate names', function() {
     let projects = createProjectsWithSameNames()
-    let validator = new ProjectsValidator()
-    let nameToProjectDirs = validator.mapNamesToProjectDirs(projects)
+    let validator = new NamesValidator()
+    let nameToProjectDirs = validator.mapNamesToPaths(projects)
 
     let reference = new Map()
     reference.set('MdefDataModel', ['F:/A/', 'F:/B/'])
@@ -214,4 +214,6 @@ describe('ProjectsSanitizer', function() {
   })
 })
 
-describe('AppsValidator')
+describe('AppsValidator', function() {
+
+})

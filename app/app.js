@@ -3,7 +3,7 @@
 function App(config, projects, directory) {
   this.name = config.name
   this.projects = projects
-  this.directory = directory
+  this.configDirectory = directory
 
   this.compileFlags = new Map()
 
