@@ -7,6 +7,7 @@ let ProjectsSanitizer = require('../app/projects-sanitizer').Sanitizer
 let NamesValidator = require('../app/names-validator').Validator
 let ProjectsValidator = require('../app/projects-validator').Validator
 let AppTranslator = require('../app/app-translator').Translator
+let CMakeFormatter = require('../app/cmake-formatter').CMakeFormatter
 
 function createProjectsWithEmptyNames() {
   let projects = []
@@ -237,7 +238,7 @@ describe('NamesValidator', function() {
   })
 })
 
-describe('ProjectsSanitizer', function() {
+describe('ProjectsSanitizer', function() {  
   it('keepProjectsTargetingPlatform() should get rid of projects that shouldn\'t be included on the specified platform', function() {
     let projects = createProjectsWithDifferentPlatforms()
     let sanitizer = new ProjectsSanitizer()
@@ -302,7 +303,21 @@ describe('ProjectsValidator', function() {
   })
 })
 
+describe('CMakeFormatter', function() {
+  it('formatIncludeDirectory()', function() {
+    let directory = 'F:/B/Public'
+    let reference = 'include_directories("F:/B/Public")\n'
+    let formatter = new CMakeFormatter()
+    let result = formatter.formatIncludeDirectory(directory)
+    expect(result).to.deep.equal(reference)
+  })
+})
+
 describe('AppTranslator', function() {
+  it('GetIncludeDirectories() should return a string representing the include directories for CMakeLists.txt', function() {
+
+  })
+
   it('translateProject() should return the contents of a CMakeLists.txt for a given project', function() {
     let fileSystemMock = {
       listAllSubdirs: function(startDir) {
@@ -315,7 +330,7 @@ describe('AppTranslator', function() {
     }
 
     let projects = createProjectsWithDifferentNames()
-    let translator = new AppTranslator(null, fileSystemMock. null) // add cmakeFormatter
+    let translator = new AppTranslator(null, fileSystemMock, new CMakeFormatter())
     let contents = translator.translateProject(projects[0])
 
     let reference = `cmake_minimum_required(VERSION 2.8)
