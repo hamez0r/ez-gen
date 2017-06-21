@@ -92,7 +92,13 @@ function readDirRecursive(startDir) {
   return files
 }
 
-//console.log(new FileSystem().listAllSubDirs('F:/Workdir/UnitTestsTry/Client'))
+//console.log(new FileSystem().listAllSubDirs('C:/Workdir/ez-gen'))
+//console.log(new FileSystem().listAllSubDirs('C:/Workdir/ez-gen'))
+// let output = 'add_library(MdefDataModel STATIC ${PUBLIC_H} ${Public_HH}'
+// let output = `add_library(MdefDataModel STATIC
+//     \${PUBLIC_H}
+//     \${Public_HH}`
+// console.log(output)
 
 module.exports = {
   FileSystem: FileSystem
