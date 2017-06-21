@@ -1,37 +1,27 @@
 'use strict';
 
-function InputSanitizer(projects, platform) {
-  this.sanitizer = new Sanitizer(projects)
+function ProjectsValidator(projects) {
+  this.validator = new Validator(projects)
 }
 
-InputSanitizer.prototype = {
-  sanitize: function() {
-    return this.sanitizer.sanitize()
+ProjectsValidator.prototype = {
+  validate: function() {
+    return this.validator.validate()
   }
 }
 
 /* Internal */
 
-function Sanitizer(projects, platform) {
+function Validator(projects) {
   this.projects = projects
-  this.platform = platform
 }
 
-Sanitizer.prototype = {
-  sanitize: function() {
+Validator.prototype = {
+  validate: function() {
     this.checkNonEmptyNames(this.projects)
 
     let namesToProjectDirs = this.mapNamesToProjectDirs(this.projects)
     this.checkDuplicateNames(namesToProjectDirs)
-
-    this.projects = this.keepProjectsTargetingPlatform(this.projects, 
-      this.platform)
-  },
-
-  keepProjectsTargetingPlatform: function(projects, platform) {
-    return projects.filter(function(project) {
-      return project.platform === platform
-    })
   },
 
   checkNonEmptyNames: function(projects) {
@@ -48,8 +38,9 @@ Sanitizer.prototype = {
   checkDuplicateNames: function(namesToProjectDirs) {
     for (let [projectName, projectDirs] of namesToProjectDirs.entries()) {
       if (projectDirs.length > 1) {
-        let error = 'Project name \"' + projectName + '\" has been found \
-          in multiple config files: ' + projectDirs.toString()
+        let error = 'Project name \"' + projectName
+          + '\" has been found in multiple config files: '
+          + projectDirs.toString()
 
         throw error
       }
@@ -79,6 +70,6 @@ Sanitizer.prototype = {
 }
 
 module.exports = {
-  InputSanitizer: InputSanitizer,
-  Sanitizer: Sanitizer
+  ProjectsValidator: ProjectsValidator,
+  Validator: Validator // for testing purposes
 }

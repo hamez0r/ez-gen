@@ -19,10 +19,10 @@
 function Project(config, directory) {
   this.name = config.name
   this.type = config.type
-  this.dependencies = config.dependencies
-  this.platform = config.platform
-  this.runAfterBuild = config.runAfterBuild
-  this.additionalCMakeCommands = config.additionalCMakeCommands
+  this.dependencies = config.dependencies ? config.dependencies : []
+  this.platform = config.platform ? config.platform : 'all'
+  this.runAfterBuild = config.runAfterBuild ? config.runAfterBuild : false
+  this.additionalCMakeCommands = config.additionalCMakeCommands ? config.additionalCMakeCommands : []
   this.configDirectory = directory
 }
 
