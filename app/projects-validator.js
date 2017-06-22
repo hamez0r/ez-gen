@@ -30,7 +30,6 @@ Validator.prototype = {
 	},
 
 	hasProject: function(projectName, projects) {
-		console.log(projectName)
 		let found = projects.find(function(project) {
 			return project.name === projectName
 		})
