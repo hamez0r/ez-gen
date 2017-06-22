@@ -22,7 +22,33 @@ Translator.prototype = {
   },
 
   translateProject: function(project) {
-    return ''
+    let cmakeContents = ''
+    cmakeContents += cmakeFormatter.getCMakeVersion(3.8)
+    cmakeContents += cmakeFormatter.getProjectDefinition(project.name)
+
+
+  },
+
+  getIncludeDirectories(project) {
+    let projectRoot = project.configDirectory
+    let projectSubdirs = fileSystem.listAllSubDirs(projectRoot)
+
+    let dependenciesDirs = []
+
+    let dependencies = app.getProjectDependencies(project)
+    for (let dependency of dependencies) {
+      let dependencyRootDir = dependency.configDirectory
+      let depenencyPublicDir = dependencyRootDir + '/Public'
+      let depenencyPublicSubdirs = this.fileSystem.listAllSubDirs(depenencyPublicDir)
+
+      dependenciesDirs.push(depenencyPublicDir)
+      dependenciesDirs = dependenciesDirs.concat(depenencyPublicSubdirs)
+    }
+
+    let allIncludeDirs = projectSubdirs.concat(dependenciesDirs)
+    return allIncludeDirs.map(function(includeDir) {
+      return this.cmakeFormatter.getIncludeDirectory(includeDir)
+    }.bind(this))
   }
 }
 

@@ -8,6 +8,8 @@ let NamesValidator = require('../app/names-validator').Validator
 let ProjectsValidator = require('../app/projects-validator').Validator
 let AppTranslator = require('../app/app-translator').Translator
 let CMakeFormatter = require('../app/cmake-formatter').CMakeFormatter
+let CMakeIdentifierCreator = require('../app/cmake-formatter').CMakeIdentifierCreator
+let App = require('../app/app').App
 
 function createProjectsWithEmptyNames() {
   let projects = []
@@ -303,6 +305,30 @@ describe('ProjectsValidator', function() {
   })
 })
 
+describe('App', function() {
+  it('getProjectDependencies() returns the project(objects) dependencies', function() {
+    let projects = createProjectsWithDifferentNames()
+    let reference = [projects[1]]
+    let app = new App({name: 'foo'}, projects, null)
+    let result = app.getProjectDependencies(projects[0])
+
+    expect(result).to.deep.equal(reference)
+  })
+})
+
+describe('CMakeIdentifierCreator', function() {
+  it('getGlobIdentifierName()', function() {
+    let directory = 'F:\\B\\Public\\LibName'
+    let reference = 'PublicLibName'
+    let creator = new CMakeIdentifierCreator()
+    let result = creator.getGlobIdentifierName(directory)
+
+    expect(result).to.deep.equal(reference)
+  })
+
+
+})
+
 describe('CMakeFormatter', function() {
   it('getIncludeDirectory()', function() {
     let directory = 'F:\\B\\Public'
@@ -350,8 +376,17 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
 })
 
 describe('AppTranslator', function() {
-  it('GetIncludeDirectories() should return a string representing the include directories for CMakeLists.txt', function() {
+  it('getIncludeDirectories() should return a list representing the include directories for CMakeLists.txt', function() {
+    let projects = createProjectsWithDifferentNames()
+    let reference = ['F:/A/Public', 'F:/A/Private', 'F:/B/Public/']
+    let app = new App({name: 'foo'}, projects, null)
 
+    let mockFs = {
+      listAllSubdirs: function(dir) {
+        
+      }
+    }
+    let appTranslator = new AppTranslator(null, mockFs, new CMakeFormatter())
   })
 
 //   it('translateProject() should return the contents of a CMakeLists.txt for a given project', function() {
@@ -374,10 +409,10 @@ describe('AppTranslator', function() {
 // include_directories("F:/B/Public")
 // include_directories("F:/B/Public/Xerces")
 // include_directories("F:/B/Public/Tokens")
-// include_directories("F:/A/Public/")
+// include_directories("F:/A/Public")
 // include_directories("F:/A/Public/Api")
 // include_directories("F:/A/Public/Local")
-// include_directories("F:/A/Private/")
+// include_directories("F:/A/Private")
 // file(GLOB Public_H "F:/A/Public/*.h")
 // file(GLOB Public_HH "F:/A/Public/*.hh")
 // file(GLOB Public_HPP "F:/A/Public/*.hpp")

@@ -7,7 +7,7 @@ function App(config, projects, directory) {
 
   this.compileFlags = new Map()
 
-  flags = config.compileFlags
+  let flags = config.compileFlags
   if (flags) {
     if (flags.win32) 
       this.compileFlags.set('win32', flags.win32)
@@ -19,6 +19,19 @@ function App(config, projects, directory) {
       this.compileFlags.set('darwin', flags.darwin)
 
     //...
+  }
+}
+
+App.prototype = {
+  getProjectDependencies(project) {
+    let dependencies = []
+
+    for (let dependency of project.dependencies)
+      dependencies.push(this.projects.find(function(dependencyProject) {
+        return dependency === dependencyProject.name
+      }))
+
+    return dependencies
   }
 }
 
