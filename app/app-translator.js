@@ -29,10 +29,17 @@ Translator.prototype = {
 
   },
 
-  getIncludeDirectories(project) {
+  getProjectIncludeDirectories(project) {
     let projectRoot = project.configDirectory
-    let projectSubdirs = fileSystem.listAllSubDirs(projectRoot)
+    return fileSystem.listAllSubDirs(projectRoot)
+  },
 
+  getDependencyIncludeDirectories(dependency) {
+
+  }
+
+  getIncludeDirectories(project) {
+    let projectSubdirs
     let dependenciesDirs = []
 
     let dependencies = app.getProjectDependencies(project)
