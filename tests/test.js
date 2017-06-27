@@ -389,6 +389,16 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
 
     expect(result).to.deep.equal(reference)
   })
+
+  it('getLinkLibraries(projectName, projectDependencies)', function() {
+    let projectName = 'MdefSerializer'
+    let projectDependencies = ['MdefXml']
+    let reference = 'target_link_libraries(MdefSerializer MdefXml)\n'
+    let formatter = new CMakeFormatter()
+    let result = formatter.getLinkLibraries(projectName, projectDependencies)
+
+    expect(result).to.deep.equal(reference)
+  })
 })
 
 describe('AppTranslator', function() {

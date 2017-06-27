@@ -40,6 +40,9 @@ Translator.prototype = {
       cmakeContents += this.formatter.getSourceGroup(dir)
     }
 
+    cmakeContents += this.formatter
+      .getLinkLibraries(project.name, project.dependecies)
+
     return cmakeContents
   },
 

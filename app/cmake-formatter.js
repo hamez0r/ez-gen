@@ -46,6 +46,16 @@ CMakeFormatter.prototype = {
 \${${globIdentifier}_H} \${${globIdentifier}_HH} \${${globIdentifier}_HPP} \
 \${${globIdentifier}_HXX} \${${globIdentifier}_C} \${${globIdentifier}_CC} \
 \${${globIdentifier}_CPP} \${${globIdentifier}_CXX})\n`
+  },
+
+  getLinkLibraries: function(project, dependencies) {
+    if (dependencies.length == 0) return ''
+    let result = `target_link_libraries(${project}`
+    for (let dependency of dependencies) {
+      result += ` ${dependency}`
+    }
+    result += ')\n'
+    return result
   }
 }
 
