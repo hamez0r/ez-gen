@@ -5,11 +5,11 @@ function CMakeFormatter() {
 }
 
 CMakeFormatter.prototype = {
-  getCMakeVersion(version) {
+  getCMakeVersion: function(version) {
     return `cmake_minimum_required(VERSION ${version})\n`
   },
 
-  getProjectDefinition(projectName) {
+  getProjectDefinition: function(projectName) {
     return `project(${projectName})\n`
   },
 
@@ -18,9 +18,10 @@ CMakeFormatter.prototype = {
     return `include_directories("${formattedDir}")\n`
   },
 
-  getProjectFiles(fullPath) {
+  getProjectFiles: function(fullPath) {
     let formattedPath = fullPath.replace(/\\/g, '/')
-    let globBaseIdentifier = this.identifierCreator.getGlobIdentifierName(fullPath)
+    let globBaseIdentifier = this.identifierCreator
+      .getGlobIdentifier(formattedPath)
 
     let files = ''
     files += `file(GLOB ${globBaseIdentifier}_H "${formattedPath}/*.h")\n`
@@ -41,24 +42,57 @@ function CMakeIdentifierCreator() {
 }
 
 CMakeIdentifierCreator.prototype = {
-  getGlobIdentifierName(directoryPath) {
-    let directories = directoryPath.split('\\')
+  getGlobIdentifier: function(directoryPath) {
+    let directories = directoryPath.split('/')
 
-    // linux doesn't have this problem
     if (directories.length > 1) {
       let startWord = directories.find(function(word) {
         return word === 'Public' || word === 'Private'
       })
 
       let startWordPosition = directories.indexOf(startWord)
-      let varName = ''
-      for (let i = startWordPosition; i < directories.length; i++) 
+      let varName = startWord
+      for (let i = startWordPosition + 1; i < directories.length; i++) 
         varName += directories[i]
 
       return varName
     }
      
     return directoryPath
+  },
+
+  getSourceGroupIdentifier: function(directoryPath) {
+    let directories = directoryPath.split('/')
+
+    if (directories.length > 1) {
+      let startWord = directories.find(function(word) {
+        return word === 'Public' || word === 'Private'
+      })
+
+      let startWordPosition = directories.indexOf(startWord)
+      let varName = startWord
+      for (let i = startWordPosition + 1; i < directories.length; i++) 
+        varName += ('\\\\' + directories[i])
+
+      return varName
+    }
+
+    return directoryPath
+  }
+}
+
+let foo = function(directoryPath, cb) {
+  let directories = directoryPath.split('/')
+
+  if (directories.length > 1) {
+    let startWord = directories.find(function(word) {
+      return word === 'Public' || word === 'Private'
+    })
+
+    let startWordPosition = directories.indexOf(startWord)
+    let varName = startWord
+    for (let i = startWordPosition + 1; i < directories.length; i++) 
+      cb(directories[i])
   }
 }
 

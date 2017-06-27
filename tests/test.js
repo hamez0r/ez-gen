@@ -44,12 +44,12 @@ function createProjectsWithDifferentNames() {
     "type": "Static",
     "dependencies": ["MdefXml"],
     "platform": "win32",
-  }, 'F:/A/'))
+  }, 'F:/A'))
   projects.push(new Project({
     "name": "MdefXml",
     "type": "Static",
     "platform": "win32",
-  }, 'F:/B/'))
+  }, 'F:/B'))
 
   return projects 
 }
@@ -222,8 +222,8 @@ describe('NamesValidator', function() {
     let nameToProjectDirs = validator.mapNamesToPaths(projects)
 
     let reference = new Map()
-    reference.set('MdefDataModel', ['F:/A/'])
-    reference.set('MdefXml', ['F:/B/'])
+    reference.set('MdefDataModel', ['F:/A'])
+    reference.set('MdefXml', ['F:/B'])
 
     expect(nameToProjectDirs).to.deep.equal(reference)
   })
@@ -317,16 +317,24 @@ describe('App', function() {
 })
 
 describe('CMakeIdentifierCreator', function() {
-  it('getGlobIdentifierName()', function() {
-    let directory = 'F:\\B\\Public\\LibName'
+  it('getGlobIdentifier()', function() {
+    let directory = 'F:/B/Public/LibName'
     let reference = 'PublicLibName'
     let creator = new CMakeIdentifierCreator()
-    let result = creator.getGlobIdentifierName(directory)
+    let result = creator.getGlobIdentifier(directory)
 
     expect(result).to.deep.equal(reference)
   })
 
+  it('getSourceGroupIdentifier()', function() {
+    let directory = 'F:/B/Public/Api'
+    // let reference = 'source_group("Public\\\\Api" FILES \${PublicApi_H} \${PublicApi_HH} \${PublicApi_HPP} \${PublicApi_HXX} \${PublicApi_C} \${PublicApi_CC} \${PublicApi_CPP} \${PublicApi_CXX})'
+    let reference = 'Public\\\\Api'
+    let creator = new CMakeIdentifierCreator()
+    let result = creator.getSourceGroupIdentifier(directory)
 
+    expect(result).to.deep.equal(reference)
+  })
 })
 
 describe('CMakeFormatter', function() {
@@ -378,15 +386,26 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
 describe('AppTranslator', function() {
   it('getIncludeDirectories() should return a list representing the include directories for CMakeLists.txt', function() {
     let projects = createProjectsWithDifferentNames()
-    let reference = ['F:/A/Public', 'F:/A/Private', 'F:/B/Public/']
+    let reference = ["F:/A/Public", "F:/A/Private", "F:/B/Public"]
     let app = new App({name: 'foo'}, projects, null)
 
     let mockFs = {
-      listAllSubdirs: function(dir) {
-        
+      listAllSubDirs: function(dir) {
+        if (dir === 'F:/A') {
+          return ['F:/A/Public', 'F:/A/Private']
+        } else if (dir === 'F:/B/Public') {
+          return []
+        } else {
+          console.log(dir)
+          throw 'wtf'
+        }
       }
     }
-    let appTranslator = new AppTranslator(null, mockFs, new CMakeFormatter())
+
+    let appTranslator = new AppTranslator(app, mockFs, new CMakeFormatter())
+    let result = appTranslator.getIncludeDirectories(projects[0])
+
+    expect(result).to.deep.equal(reference)
   })
 
 //   it('translateProject() should return the contents of a CMakeLists.txt for a given project', function() {
