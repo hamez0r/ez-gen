@@ -21,7 +21,7 @@ CMakeFormatter.prototype = {
   getProjectFiles: function(fullPath) {
     let formattedPath = fullPath.replace(/\\/g, '/')
     let globBaseIdentifier = this.identifierCreator
-      .getGlobIdentifier(formattedPath)
+      .getGlob(formattedPath)
 
     let files = ''
     files += `file(GLOB ${globBaseIdentifier}_H "${formattedPath}/*.h")\n`
@@ -34,6 +34,18 @@ CMakeFormatter.prototype = {
     files += `file(GLOB ${globBaseIdentifier}_CXX "${formattedPath}/*.cxx")\n`
 
     return files
+  },
+
+  getSourceGroup: function(fullPath) {
+    let formattedPath = fullPath.replace(/\\/g, '/')
+    let sourceGroupIdentifier = this.identifierCreator
+      .getSourceGroup(formattedPath)
+    let globIdentifier = this.identifierCreator
+      .getGlob(formattedPath)
+    return `source_group("${sourceGroupIdentifier}" FILES \
+\${${globIdentifier}_H} \${${globIdentifier}_HH} \${${globIdentifier}_HPP} \
+\${${globIdentifier}_HXX} \${${globIdentifier}_C} \${${globIdentifier}_CC} \
+\${${globIdentifier}_CPP} \${${globIdentifier}_CXX})\n`
   }
 }
 
@@ -42,7 +54,7 @@ function CMakeIdentifierCreator() {
 }
 
 CMakeIdentifierCreator.prototype = {
-  getGlobIdentifier: function(directoryPath) {
+  getGlob: function(directoryPath) {
     let directories = directoryPath.split('/')
 
     if (directories.length > 1) {
@@ -61,7 +73,7 @@ CMakeIdentifierCreator.prototype = {
     return directoryPath
   },
 
-  getSourceGroupIdentifier: function(directoryPath) {
+  getSourceGroup: function(directoryPath) {
     let directories = directoryPath.split('/')
 
     if (directories.length > 1) {

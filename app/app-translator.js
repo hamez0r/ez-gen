@@ -36,7 +36,11 @@ Translator.prototype = {
       cmakeContents += this.formatter.getProjectFiles(dir)
     }
 
+    for (let dir of projectDirs) {
+      cmakeContents += this.formatter.getSourceGroup(dir)
+    }
 
+    return cmakeContents
   },
 
   getProjectOwnIncludeDirectories: function(project) {

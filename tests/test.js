@@ -317,21 +317,20 @@ describe('App', function() {
 })
 
 describe('CMakeIdentifierCreator', function() {
-  it('getGlobIdentifier()', function() {
+  it('getGlob()', function() {
     let directory = 'F:/B/Public/LibName'
     let reference = 'PublicLibName'
     let creator = new CMakeIdentifierCreator()
-    let result = creator.getGlobIdentifier(directory)
+    let result = creator.getGlob(directory)
 
     expect(result).to.deep.equal(reference)
   })
 
-  it('getSourceGroupIdentifier()', function() {
+  it('getSourceGroup()', function() {
     let directory = 'F:/B/Public/Api'
-    // let reference = 'source_group("Public\\\\Api" FILES \${PublicApi_H} \${PublicApi_HH} \${PublicApi_HPP} \${PublicApi_HXX} \${PublicApi_C} \${PublicApi_CC} \${PublicApi_CPP} \${PublicApi_CXX})'
     let reference = 'Public\\\\Api'
     let creator = new CMakeIdentifierCreator()
-    let result = creator.getSourceGroupIdentifier(directory)
+    let result = creator.getSourceGroup(directory)
 
     expect(result).to.deep.equal(reference)
   })
@@ -378,6 +377,15 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
 `
     let formatter = new CMakeFormatter()
     let result = formatter.getProjectFiles(fullPath)
+
+    expect(result).to.deep.equal(reference)
+  })
+
+  it('getSourceGroup(fullPath)', function() {
+    let fullPath = 'F:\\A\\Public\\Api'
+    let reference = 'source_group("Public\\\\Api" FILES \${PublicApi_H} \${PublicApi_HH} \${PublicApi_HPP} \${PublicApi_HXX} \${PublicApi_C} \${PublicApi_CC} \${PublicApi_CPP} \${PublicApi_CXX})\n'
+    let formatter = new CMakeFormatter()
+    let result = formatter.getSourceGroup(fullPath)
 
     expect(result).to.deep.equal(reference)
   })
