@@ -4,7 +4,7 @@ let fs = require('fs')
 let path = require('path')
 
 function FileSystem() {
-
+  this.separator = process.platform === 'win32' ? '\\' : '/'
 }
 
 FileSystem.prototype = {
@@ -23,6 +23,15 @@ FileSystem.prototype = {
 
     return subDirs
   },
+
+  listAllSubDirsAsRelativePaths: function(startDir) {
+    let subDirs = this.listAllSubDirs(startDir)
+
+    return subDirs.map(function(absolutePath) {
+      return absolutePath.replace(startDir + this.separator, '')
+    }.bind(this))
+  },
+
 
   getCurrentDirectory: function() {
     return process.cwd()
@@ -99,6 +108,8 @@ function readDirRecursive(startDir) {
 //     \${PUBLIC_H}
 //     \${Public_HH}`
 // console.log(output)
+
+// console.log(new FileSystem().listAllSubDirsAsRelativePaths('C:\\Workdir\\ez-gen\\app\\dir2'))
 
 module.exports = {
   FileSystem: FileSystem

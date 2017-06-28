@@ -2,6 +2,10 @@
 
 function CMakeFormatter() {
   this.identifierCreator = new CMakeIdentifierCreator()
+  this.binaryCommand = new Map()
+  this.binaryCommand.set('Static', 'add_library')
+  this.binaryCommand.set('Shared', 'add_library')
+  this.binaryCommand.set('Executable', 'add_executable')
 }
 
 CMakeFormatter.prototype = {
@@ -48,12 +52,34 @@ CMakeFormatter.prototype = {
 \${${globIdentifier}_CPP} \${${globIdentifier}_CXX})\n`
   },
 
-  getLinkLibraries: function(project, dependencies) {
+  getLinkLibraries: function(projectName, dependencies) {
     if (dependencies.length == 0) return ''
-    let result = `target_link_libraries(${project}`
+    let result = `target_link_libraries(${projectName}`
     for (let dependency of dependencies) {
       result += ` ${dependency}`
     }
+    result += ')\n'
+    return result
+  },
+
+  getBinary: function(name, type, subDirs) {
+    let command = this.binaryCommand.get(type)
+    let binaryType = type.toUpperCase()
+
+    let result = `${command}(${name} ${binaryType}\n`
+    for (let subDir of subDirs) {
+      subDir = subDir.replace(/\\/g, '/')
+      let identifier = this.identifierCreator.getGlob(subDir)
+      result += `    \$\{${identifier}_H}\n`
+      result += `    \$\{${identifier}_HH}\n`
+      result += `    \$\{${identifier}_HPP}\n`
+      result += `    \$\{${identifier}_HXX}\n`
+      result += `    \$\{${identifier}_C}\n`
+      result += `    \$\{${identifier}_CC}\n`
+      result += `    \$\{${identifier}_CPP}\n`
+      result += `    \$\{${identifier}_CXX}\n`
+    }
+
     result += ')\n'
     return result
   }

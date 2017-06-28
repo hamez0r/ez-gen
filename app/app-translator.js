@@ -41,7 +41,10 @@ Translator.prototype = {
     }
 
     cmakeContents += this.formatter
-      .getLinkLibraries(project.name, project.dependecies)
+      .getLinkLibraries(project.name, project.dependencies)
+
+    cmakeContents += this.formatter
+      .getBinary(project.name, project.type, projectDirs)
 
     return cmakeContents
   },
