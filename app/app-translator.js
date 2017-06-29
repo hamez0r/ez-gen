@@ -21,7 +21,7 @@ Translator.prototype = {
     return new Map()
   },
 
-  translateProject: function(project) {
+  translateCompilingProject: function(project) {
     let cmakeContents = ''
     cmakeContents += this.formatter.getCMakeVersion(3.8)
     cmakeContents += this.formatter.getProjectDefinition(project.name)
