@@ -178,11 +178,11 @@ ProjectsFactory = {
   },
 
   createExternalSharedProject: function() {
-    let project = newProject({
+    return new Project({
       "name": "Xerces",
       "type": "ExternalShared",
       "platform": "win32"
-    })
+    }, 'F:/A')
   }
 }
 

@@ -87,6 +87,11 @@ CMakeFormatter.prototype = {
   getSubProject(appName, projectName, cmakeListsDir) {
     let dir = cmakeListsDir.replace(/\\/g, '/')
     return `add_subdirectory("${dir}/${appName}/${projectName}")`
+  },
+
+  getLinkDirectory(projectDir) {
+    let dir = projectDir.replace(/\\/g, '/')
+    return `link_directories("${dir}/Lib")`
   }
 }
 

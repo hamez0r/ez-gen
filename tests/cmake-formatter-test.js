@@ -110,7 +110,12 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
     expect(result).to.deep.equal(reference)
   })
 
-  it('getExternalLinkDirectory()', function() {
-    
+  it('getLinkDirectory(projectDir)', function() {
+    let projectDir = 'C:\\Workdir\\toolkitwbs\\zExternals\\log4cxx'
+    let reference = 'link_directories("C:/Workdir/toolkitwbs/zExternals/log4cxx/Lib")'
+    let formatter = new CMakeFormatter()
+
+    let result = formatter.getLinkDirectory(projectDir)
+    expect(result).to.deep.equal(reference)
   })
 })
