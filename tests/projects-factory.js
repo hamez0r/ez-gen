@@ -175,6 +175,14 @@ ProjectsFactory = {
     }, 'F:/B/'))
 
     return projects 
+  },
+
+  createExternalSharedProject: function() {
+    let project = newProject({
+      "name": "Xerces",
+      "type": "ExternalShared",
+      "platform": "win32"
+    })
   }
 }
 
