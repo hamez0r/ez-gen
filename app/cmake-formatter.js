@@ -82,6 +82,11 @@ CMakeFormatter.prototype = {
 
     result += ')\n'
     return result
+  },
+
+  getSubProject(appName, projectName, cmakeListsDir) {
+    let dir = cmakeListsDir.replace(/\\/g, '/')
+    return `add_subdirectory("${dir}/${appName}/${projectName}")`
   }
 }
 

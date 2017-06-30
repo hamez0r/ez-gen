@@ -98,7 +98,19 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
     expect(result).to.deep.equal(reference)
   })
 
-  it('getSubProject()', function() {
-     
+  it('getSubProject(appName, projectName, cmakeListsDir)', function() {
+    let appName = 'MdefToolkit'
+    let projectName = 'MdefXml'
+    let cmakeListsDir = 'C:\\Workdir\\SCMotionTextFiles\\build'
+    let reference = 'add_subdirectory("C:/Workdir/SCMotionTextFiles/build/MdefToolkit/MdefXml")'
+    
+    let formatter = new CMakeFormatter()
+    let result = formatter.getSubProject(appName, projectName, cmakeListsDir)
+
+    expect(result).to.deep.equal(reference)
+  })
+
+  it('getExternalLinkDirectory()', function() {
+    
   })
 })
