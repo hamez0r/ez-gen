@@ -126,7 +126,7 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
 
     let reference = `add_custom_target(log4cxx ALL
     COMMAND cmake -E make_directory "C:/Workdir/toolkitwbs/build_win32/bin"
-    COMMAND cmake -E copy_directory "C:/Workdir/toolkitwbs/zExternals/log4cxx/Lib" "C:/Workdir/toolkitwbs/build_win32/bin")`
+    COMMAND cmake -E copy_directory "C:/Workdir/toolkitwbs/zExternals/log4cxx/Lib" "C:/Workdir/toolkitwbs/build_win32/bin")\n`
 
     let formatter = new CMakeFormatter()
     let result = formatter
@@ -142,6 +142,18 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
 
     let formatter = new CMakeFormatter()
     let result = formatter.getBuildBinDirectory(workDirectory, targetPlatform)
+
+    expect(result).to.deep.equal(reference)
+  })
+
+  it('getProjectCMakeDestination(projectName, workDirectory)', function() {
+    let projectName = 'MdefXml'
+    let workDirectory = 'C:\\Workdir\\toolkitwbs'
+
+    let reference =  'C:/Workdir/toolkitwbs/build/MdefXml/CMakeLists.txt'
+
+    let formatter = new CMakeFormatter()
+    let result = formatter.getProjectCMakeDestination(projectName, workDirectory)
 
     expect(result).to.deep.equal(reference)
   })

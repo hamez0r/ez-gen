@@ -100,12 +100,19 @@ CMakeFormatter.prototype = {
 
     return `add_custom_target(${projectName} ALL
     COMMAND cmake -E make_directory "${destinationPath}"
-    COMMAND cmake -E copy_directory "${projectPath}/Lib" "${destinationPath}")`
+    COMMAND cmake -E copy_directory "${projectPath}/Lib" "${destinationPath}")\n`
   },
 
   getBuildBinDirectory: function(workDirectory, targetPlatform) {
     let workDirPath = workDirectory.replace(/\\/g, '/')
-    return `${workDirPath}/build_${targetPlatform}/bin`
+    workDirPath = `${workDirPath}/build_${targetPlatform}/bin`
+    return workDirPath.replace(/\/\//g, '/')
+  },
+
+  getProjectCMakeDestination: function(projectName, workDirectory) {
+    let destinationPath = workDirectory.replace(/\\/g, '/')
+    destinationPath = `${destinationPath}/build/${projectName}/CMakeLists.txt`
+    return destinationPath.replace(/\/\//g, '/')
   }
 }
 

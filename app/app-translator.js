@@ -10,6 +10,16 @@ AppTranslator.prototype = {
   }
 }
 
+function Translator(app, fileSystem, cmakeFormatter) {
+  this.app = app
+  this.fileSystem = fileSystem
+  this.cmakeFormatter = cmakeFormatter
+}
+
+Translator.prototype = {
+  
+}
+
 
 module.exports = {
   AppTranslator: AppTranslator,
