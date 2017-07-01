@@ -182,7 +182,7 @@ ProjectsFactory = {
       "name": "Xerces",
       "type": "ExternalShared",
       "platform": "win32"
-    }, 'F:/A')
+    }, 'F:/A/App/Project')
   }
 }
 

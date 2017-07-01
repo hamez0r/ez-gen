@@ -118,4 +118,31 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
     let result = formatter.getLinkDirectory(projectDir)
     expect(result).to.deep.equal(reference)
   })
+
+  it('getExternalProjectCustomTarget(projectName, projectPath, destinationPath)', function() {
+    let projectName = 'log4cxx'
+    let projectPath = 'C:\\Workdir\\toolkitwbs\\zExternals\\log4cxx'
+    let destinationPath = 'C:\\Workdir\\toolkitwbs\\build_win32\\bin'
+
+    let reference = `add_custom_target(log4cxx ALL
+    COMMAND cmake -E make_directory "C:/Workdir/toolkitwbs/build_win32/bin"
+    COMMAND cmake -E copy_directory "C:/Workdir/toolkitwbs/zExternals/log4cxx/Lib" "C:/Workdir/toolkitwbs/build_win32/bin")`
+
+    let formatter = new CMakeFormatter()
+    let result = formatter
+      .getExternalProjectCustomTarget(projectName, projectPath, destinationPath)
+
+    expect(result).to.deep.equal(reference)
+  })
+
+  it('getBuildBinDirectory(workDirectory, targetPlatform)', function() {
+    let workDirectory = 'C:\\Workdir\\toolkitwbs'
+    let targetPlatform = 'win32'
+    let reference = 'C:/Workdir/toolkitwbs/build_win32/bin'
+
+    let formatter = new CMakeFormatter()
+    let result = formatter.getBuildBinDirectory(workDirectory, targetPlatform)
+
+    expect(result).to.deep.equal(reference)
+  })
 })

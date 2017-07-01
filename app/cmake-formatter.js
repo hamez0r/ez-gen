@@ -84,14 +84,28 @@ CMakeFormatter.prototype = {
     return result
   },
 
-  getSubProject(appName, projectName, cmakeListsDir) {
+  getSubProject: function(appName, projectName, cmakeListsDir) {
     let dir = cmakeListsDir.replace(/\\/g, '/')
     return `add_subdirectory("${dir}/${appName}/${projectName}")`
   },
 
-  getLinkDirectory(projectDir) {
+  getLinkDirectory: function(projectDir) {
     let dir = projectDir.replace(/\\/g, '/')
     return `link_directories("${dir}/Lib")`
+  },
+
+  getExternalProjectCustomTarget: function(projectName, projectDir, destinationDir) {
+    let projectPath = projectDir.replace(/\\/g, '/')
+    let destinationPath = destinationDir.replace(/\\/g, '/')
+
+    return `add_custom_target(${projectName} ALL
+    COMMAND cmake -E make_directory "${destinationPath}"
+    COMMAND cmake -E copy_directory "${projectPath}/Lib" "${destinationPath}")`
+  },
+
+  getBuildBinDirectory: function(workDirectory, targetPlatform) {
+    let workDirPath = workDirectory.replace(/\\/g, '/')
+    return `${workDirPath}/build_${targetPlatform}/bin`
   }
 }
 
