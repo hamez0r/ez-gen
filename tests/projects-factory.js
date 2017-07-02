@@ -183,6 +183,17 @@ ProjectsFactory = {
       "type": "ExternalShared",
       "platform": "win32"
     }, 'F:/A/App/Project')
+  },
+
+  createProjectsForApp: function() {
+    let projects = this.createProjectsWithDifferentNames()
+    projects.push(new Project({
+      "name": "Xerces",
+      "type": "ExternalShared",
+      "platform": "win32"
+    }, 'F:/ExternalProject'))
+
+    return projects
   }
 }
 

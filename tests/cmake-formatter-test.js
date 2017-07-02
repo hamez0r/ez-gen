@@ -157,4 +157,76 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
 
     expect(result).to.deep.equal(reference)
   })
+
+  it('getSuppressRegeneration()', function() {
+    let reference = 'set(CMAKE_SUPPRESS_REGENERATION ON)'
+
+    let formatter = new CMakeFormatter()
+    let result = formatter.getSuppressRegeneration()
+
+    expect(result).to.deep.equal(reference)
+  })
+
+  it('getConfigurations([configurations])', function() {
+    let configs = ['Debug', 'Release']
+    
+    let reference = `set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Configurations" FORCE)`
+
+    let formatter = new CMakeFormatter()
+    let result = formatter.getConfigurations(configs)
+
+    expect(result).to.deep.equal(reference)
+  })
+
+  it('getRuntimeOutputDirectory(outDir)', function() {
+    let outDir = 'C:\\Workdir\\App\\build_win32\\bin'
+
+    let reference = `set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "C:/Workdir/App/build_win32/bin")`
+    
+    let formatter = new CMakeFormatter()
+    let result = formatter.getRuntimeOutputDirectory(outDir)
+
+    expect(result).to.deep.equal(reference)    
+  })
+
+  it('getLibraryOutputDirectory(outDir)', function() {
+    let outDir = 'C:\\Workdir\\App\\build_win32\\bin'
+
+    let reference = `set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "C:/Workdir/App/build_win32/bin")`
+    
+    let formatter = new CMakeFormatter()
+    let result = formatter.getLibraryOutputDirectory(outDir)
+
+    expect(result).to.deep.equal(reference)    
+  })
+
+  it('getArchiveOutputDirectory(outDir)', function() {
+    let outDir = 'Lib'
+
+    let reference = `set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "Lib")`
+    
+    let formatter = new CMakeFormatter()
+    let result = formatter.getArchiveOutputDirectory(outDir)
+
+    expect(result).to.deep.equal(reference)    
+  })
+
+  it('getOutputForConfigurations(runtimeOutDir, libraryOutDir, archiveOutDir', function() {
+    let runtimeOutDir = `C:\\Workdir\\App\\build_win32\\bin`
+    let libraryOutDir = `C:\\Workdir\\App\\build_win32\\bin`
+    let archiveOutDir = `Lib`
+
+    let reference = `foreach(OUTPUTCONFIG \${CMAKE_CONFIGURATION_TYPES})
+  string(TOUPPER \${OUTPUTCONFIG} OUTPUTCONFIG)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_\${OUTPUTCONFIG} "C:/Workdir/App/build_win32/bin")
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_\${OUTPUTCONFIG} "C:/Workdir/App/build_win32/bin")
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_\${OUTPUTCONFIG} "Lib")
+endforeach()`
+
+    let formatter = new CMakeFormatter()
+    let result = formatter
+      .getOutputForConfigurations(runtimeOutDir, libraryOutDir, archiveOutDir)
+    
+    expect(result).to.deep.equal(reference)      
+  })
 })

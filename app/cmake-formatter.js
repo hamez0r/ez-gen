@@ -86,12 +86,14 @@ CMakeFormatter.prototype = {
 
   getSubProject: function(appName, projectName, cmakeListsDir) {
     let dir = cmakeListsDir.replace(/\\/g, '/')
-    return `add_subdirectory("${dir}/${appName}/${projectName}")`
+    dir = `add_subdirectory("${dir}/${appName}/${projectName}")`
+    return dir.replace(/\/\//g, '/')
   },
 
   getLinkDirectory: function(projectDir) {
     let dir = projectDir.replace(/\\/g, '/')
-    return `link_directories("${dir}/Lib")`
+    dir = `link_directories("${dir}/Lib")`
+    return dir.replace(/\/\//g, '/')
   },
 
   getExternalProjectCustomTarget: function(projectName, projectDir, destinationDir) {
