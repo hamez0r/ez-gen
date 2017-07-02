@@ -1,12 +1,12 @@
 'use strict'
 
-function AppTranslator(app, fileSystem, cmakeFormatter) {
-  this.translator = new Translator(app, fileSystem, cmakeFormatter)
+function AppTranslator(fileSystem, cmakeFormatter) {
+  this.translator = new Translator(fileSystem, cmakeFormatter)
 }
 
 AppTranslator.prototype = {
-  translate: function(app) {
-    return this.translator.translateApp(app)
+  translate: function(app, targetPlatform) {
+    return this.translator.translate(app, targetPlatform)
   }
 }
 

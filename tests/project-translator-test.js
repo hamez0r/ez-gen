@@ -55,7 +55,6 @@ describe('ProjectTranslator', function() {
     let contents = translator.translateCompilingProject(projects[0], targetPlatform)
 
     let cmakeContents = `cmake_minimum_required(VERSION 3.8)
-project(MdefDataModel)
 include_directories("F:/A/Public")
 include_directories("F:/A/Public/Api")
 include_directories("F:/A/Public/Local")
@@ -99,7 +98,6 @@ source_group("Public" FILES \${Public_H} \${Public_HH} \${Public_HPP} \${Public_
 source_group("Public\\\\Api" FILES \${PublicApi_H} \${PublicApi_HH} \${PublicApi_HPP} \${PublicApi_HXX} \${PublicApi_C} \${PublicApi_CC} \${PublicApi_CPP} \${PublicApi_CXX})
 source_group("Public\\\\Local" FILES \${PublicLocal_H} \${PublicLocal_HH} \${PublicLocal_HPP} \${PublicLocal_HXX} \${PublicLocal_C} \${PublicLocal_CC} \${PublicLocal_CPP} \${PublicLocal_CXX})
 source_group("Private" FILES \${Private_H} \${Private_HH} \${Private_HPP} \${Private_HXX} \${Private_C} \${Private_CC} \${Private_CPP} \${Private_CXX})
-target_link_libraries(MdefDataModel MdefXml)
 add_library(MdefDataModel STATIC
     \${Public_H}
     \${Public_HH}
@@ -134,6 +132,7 @@ add_library(MdefDataModel STATIC
     \${Private_CPP}
     \${Private_CXX}
 )
+target_link_libraries(MdefDataModel MdefXml)
 `
   let reference = {
     path: 'F:/build/MdefDataModel/CMakeLists.txt',

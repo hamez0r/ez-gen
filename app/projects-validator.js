@@ -17,7 +17,7 @@ function Validator(projects) {
 Validator.prototype = {
 	validate: function() {
 		for (let project of this.projects)
-			this.checkDependencies(project)
+			this.checkDependencies(project, this.projects)
 	},
 
 	checkDependencies: function(project, projects) {

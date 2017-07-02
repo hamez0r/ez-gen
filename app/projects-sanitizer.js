@@ -8,7 +8,7 @@ function ProjectsSanitizer(projects, platform) {
 
 ProjectsSanitizer.prototype = {
   sanitize: function() {
-    return sanitizer.keepProjectsTargetingPlatform(this.projects, this.platform)
+    return this.sanitizer.keepProjectsTargetingPlatform(this.projects, this.platform)
   }
 }
 

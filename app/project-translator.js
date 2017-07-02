@@ -73,7 +73,6 @@ Translator.prototype = {
   translateCompilingProject: function(project, targetPlatform) {
     let cmakeContents = ''
     cmakeContents += this.formatter.getCMakeVersion(3.8)
-    cmakeContents += this.formatter.getProjectDefinition(project.name)
     
     let projectIncludeDirs = this.getIncludeDirectories(project)
     for (let dir of projectIncludeDirs) {
@@ -90,10 +89,10 @@ Translator.prototype = {
     }
 
     cmakeContents += this.formatter
-      .getLinkLibraries(project.name, project.dependencies)
+      .getBinary(project.name, project.type, projectDirs)
 
     cmakeContents += this.formatter
-      .getBinary(project.name, project.type, projectDirs)
+      .getLinkLibraries(project.name, project.dependencies)
 
     let workDir = this.fileSystem.getCurrentDirectory()
 

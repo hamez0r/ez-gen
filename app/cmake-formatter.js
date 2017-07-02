@@ -81,7 +81,7 @@ CMakeFormatter.prototype = {
     }
 
     result += ')\n'
-    return result
+    return result.replace('EXECUTABLE', '')
   },
 
   getSubProject: function(projectName, cmakeListsDir) {

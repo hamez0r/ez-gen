@@ -37,8 +37,8 @@ FileSystem.prototype = {
     return process.cwd()
   },
 
-  getAppsDirectories: function(startDir) {
-    return getPathsContaining('app.json', startDir)
+  getAppDirectory: function(startDir) {
+    return getPathsContaining('app.json', startDir)[0]
   },
 
   getProjectsDirectories: function(appDir) {
@@ -55,9 +55,16 @@ FileSystem.prototype = {
     return readFile(filePath)
   },
 
-  createDirectory: function(dirName, parentDir) {},
+  createDirectory: function(dirPath) {
+    if (!fs.existsSync(dirPath))
+      fs.mkdirSync(dirPath)
+  },
 
-  createFile: function(content, fileName, parentDir) {},
+  createFile: function(filePath, content) {
+    let parentDir = filePath.substring(0, filePath.lastIndexOf('/'))
+    this.createDirectory(parentDir)
+    fs.writeFileSync(filePath, content)
+  },
 }
 
 function readFile(filePath) {

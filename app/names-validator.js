@@ -39,7 +39,7 @@ Validator.prototype = {
   checkDuplicateNames: function(namesToPaths) {
     for (let [entityName, paths] of namesToPaths.entries()) {
       if (paths.length > 1) {
-        let error = this.entitiesType + ' ' +entityName
+        let error = this.entitiesType + ' ' + entityName
           + ' has been found in multiple config files: '
           + paths.toString()
 
