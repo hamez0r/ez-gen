@@ -84,15 +84,15 @@ CMakeFormatter.prototype = {
     return result
   },
 
-  getSubProject: function(appName, projectName, cmakeListsDir) {
+  getSubProject: function(projectName, cmakeListsDir) {
     let dir = cmakeListsDir.replace(/\\/g, '/')
-    dir = `add_subdirectory("${dir}/${appName}/${projectName}")`
+    dir = `add_subdirectory("${dir}/${projectName}")\n`
     return dir.replace(/\/\//g, '/')
   },
 
   getLinkDirectory: function(projectDir) {
     let dir = projectDir.replace(/\\/g, '/')
-    dir = `link_directories("${dir}/Lib")`
+    dir = `link_directories("${dir}/Lib")\n`
     return dir.replace(/\/\//g, '/')
   },
 
@@ -115,6 +115,57 @@ CMakeFormatter.prototype = {
     let destinationPath = workDirectory.replace(/\\/g, '/')
     destinationPath = `${destinationPath}/build/${projectName}/CMakeLists.txt`
     return destinationPath.replace(/\/\//g, '/')
+  },
+
+  getAppCMakeDestination: function(workDir) {
+    let destinationPath = workDir.replace(/\\/g, '/')
+    destinationPath = `${destinationPath}/build/CMakeLists.txt`
+    return destinationPath.replace(/\/\//g, '/')
+  },
+
+  getAppDestinationDir: function(workDir) {
+    let destinationPath = workDir.replace(/\\/g, '/')
+    destinationPath = `${destinationPath}/build`
+    return destinationPath.replace(/\/\//g, '/')
+  },
+
+  getSuppressRegeneration: function() {
+    return 'set(CMAKE_SUPPRESS_REGENERATION ON)\n'
+  },
+
+  getRuntimeOutputDirectory: function(outDir) {
+    let dir = outDir.replace(/\\/g, '/')
+    return `set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${dir}")\n`
+  },
+
+  getLibraryOutputDirectory: function(outDir) {
+    let dir = outDir.replace(/\\/g, '/')
+    return `set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${dir}")\n`
+  },
+
+  getArchiveOutputDirectory: function(outDir) {
+    let dir = outDir.replace(/\\/g, '/')
+    return `set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${dir}")\n`
+  },
+
+  getConfigurations: function(configs) {
+    let cmakeConfigurations = configs.join(';')
+    return `set(CMAKE_CONFIGURATION_TYPES "${cmakeConfigurations}" CACHE STRING "Configurations" FORCE)\n`
+  },
+
+  getOutputForConfigurations: function(runtimeDir, libraryDir, archiveDir) {
+    let runtimeOutDir = runtimeDir.replace(/\\/g, '/')
+    let libraryOutDir = libraryDir.replace(/\\/g, '/')
+    let archiveOutDir = archiveDir.replace(/\\/g, '/')
+
+    let content = `foreach(OUTPUTCONFIG \${CMAKE_CONFIGURATION_TYPES})
+  string(TOUPPER \${OUTPUTCONFIG} OUTPUTCONFIG)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_\${OUTPUTCONFIG} "${runtimeOutDir}")
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_\${OUTPUTCONFIG} "${libraryOutDir}")
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_\${OUTPUTCONFIG} "${archiveOutDir}")
+endforeach()\n`
+
+    return content
   }
 }
 

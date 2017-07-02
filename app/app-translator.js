@@ -41,8 +41,10 @@ Translator.prototype = {
       cmakeContents += this.formatter.getLinkDirectory(project.configDirectory)
     }
 
+    let appDestinationDir = this.formatter.getAppDestinationDir(workDir)
     for (let project of app.projects) {
-
+      cmakeContents += this
+        .formatter.getSubProject(project.name, appDestinationDir)
     }
 
     let appDestination = this.formatter.getAppCMakeDestination(workDir)

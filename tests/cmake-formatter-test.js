@@ -98,21 +98,21 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
     expect(result).to.deep.equal(reference)
   })
 
-  it('getSubProject(appName, projectName, cmakeListsDir)', function() {
+  it('getSubProject(projectName, cmakeListsDir)', function() {
     let appName = 'MdefToolkit'
     let projectName = 'MdefXml'
     let cmakeListsDir = 'C:\\Workdir\\SCMotionTextFiles\\build'
-    let reference = 'add_subdirectory("C:/Workdir/SCMotionTextFiles/build/MdefToolkit/MdefXml")'
+    let reference = 'add_subdirectory("C:/Workdir/SCMotionTextFiles/build/MdefXml")\n'
     
     let formatter = new CMakeFormatter()
-    let result = formatter.getSubProject(appName, projectName, cmakeListsDir)
+    let result = formatter.getSubProject(projectName, cmakeListsDir)
 
     expect(result).to.deep.equal(reference)
   })
 
   it('getLinkDirectory(projectDir)', function() {
     let projectDir = 'C:\\Workdir\\toolkitwbs\\zExternals\\log4cxx'
-    let reference = 'link_directories("C:/Workdir/toolkitwbs/zExternals/log4cxx/Lib")'
+    let reference = 'link_directories("C:/Workdir/toolkitwbs/zExternals/log4cxx/Lib")\n'
     let formatter = new CMakeFormatter()
 
     let result = formatter.getLinkDirectory(projectDir)
@@ -159,7 +159,7 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
   })
 
   it('getSuppressRegeneration()', function() {
-    let reference = 'set(CMAKE_SUPPRESS_REGENERATION ON)'
+    let reference = 'set(CMAKE_SUPPRESS_REGENERATION ON)\n'
 
     let formatter = new CMakeFormatter()
     let result = formatter.getSuppressRegeneration()
@@ -170,7 +170,7 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
   it('getConfigurations([configurations])', function() {
     let configs = ['Debug', 'Release']
     
-    let reference = `set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Configurations" FORCE)`
+    let reference = `set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Configurations" FORCE)\n`
 
     let formatter = new CMakeFormatter()
     let result = formatter.getConfigurations(configs)
@@ -181,7 +181,7 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
   it('getRuntimeOutputDirectory(outDir)', function() {
     let outDir = 'C:\\Workdir\\App\\build_win32\\bin'
 
-    let reference = `set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "C:/Workdir/App/build_win32/bin")`
+    let reference = `set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "C:/Workdir/App/build_win32/bin")\n`
     
     let formatter = new CMakeFormatter()
     let result = formatter.getRuntimeOutputDirectory(outDir)
@@ -192,7 +192,7 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
   it('getLibraryOutputDirectory(outDir)', function() {
     let outDir = 'C:\\Workdir\\App\\build_win32\\bin'
 
-    let reference = `set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "C:/Workdir/App/build_win32/bin")`
+    let reference = `set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "C:/Workdir/App/build_win32/bin")\n`
     
     let formatter = new CMakeFormatter()
     let result = formatter.getLibraryOutputDirectory(outDir)
@@ -203,7 +203,7 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
   it('getArchiveOutputDirectory(outDir)', function() {
     let outDir = 'Lib'
 
-    let reference = `set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "Lib")`
+    let reference = `set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "Lib")\n`
     
     let formatter = new CMakeFormatter()
     let result = formatter.getArchiveOutputDirectory(outDir)
@@ -221,12 +221,34 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_\${OUTPUTCONFIG} "C:/Workdir/App/build_win32/bin")
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_\${OUTPUTCONFIG} "C:/Workdir/App/build_win32/bin")
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_\${OUTPUTCONFIG} "Lib")
-endforeach()`
+endforeach()\n`
 
     let formatter = new CMakeFormatter()
     let result = formatter
       .getOutputForConfigurations(runtimeOutDir, libraryOutDir, archiveOutDir)
     
     expect(result).to.deep.equal(reference)      
+  })
+
+  it('getAppDestinationDir(workDir)', function() {
+    let workDir = 'C:\\Workdir\\App'
+
+    let reference = 'C:/Workdir/App/build'
+
+    let formatter = new CMakeFormatter()
+    let result = formatter.getAppDestinationDir(workDir)
+
+    expect(result).to.deep.equal(reference)
+  })
+
+  it('getAppCMakeDestination(workDir)', function() {
+    let workDir = 'C:\\Workdir\\App'
+
+    let reference = 'C:/Workdir/App/build/CMakeLists.txt'
+
+    let formatter = new CMakeFormatter()
+    let result = formatter.getAppCMakeDestination(workDir)
+
+    expect(result).to.deep.equal(reference)
   })
 })

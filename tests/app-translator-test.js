@@ -34,7 +34,7 @@ endforeach()
 link_directories("F:/ExternalProject/Lib")
 add_subdirectory("F:/build/MdefDataModel")
 add_subdirectory("F:/build/MdefXml")
-add_subdirectory("F:/build/ExternalProject")
+add_subdirectory("F:/build/Xerces")
 `
 
     let reference = {
