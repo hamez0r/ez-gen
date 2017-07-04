@@ -2,10 +2,13 @@
   "name": "ez-gen",
   "version": "0.0.1",
   "description": "Generates C++ projects from directory structure.",
-  "main": "main.js",
+  "main": "./app/main.js",
   "scripts": {
     "test": "mocha tests",
     "coverage": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha ./tests/*-test.js"
+  },
+  "bin": {
+    "ez-gen": "./app/main.js"
   },
   "repository": {
     "type": "git",

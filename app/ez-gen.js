@@ -60,18 +60,20 @@ EzGen.prototype = {
       fs.createFile(cmake.path, cmake.cmakeContents)
     } 
 
-    // process.chdir(cmakeFormatter.getAppDestinationDir(currentDir))
-    fs.createDirectory(currentDir + '/build_win32')
-    process.chdir(currentDir + '/build_win32')
+    let buildDir = cmakeFormatter.getBuildDir(currentDir, platform)
+    fs.createDirectory(buildDir)
+
+    // exec('cmake', ['../build'], {cwd: buildDir})
+
+    process.chdir(buildDir)
     let child = exec('cmake ../build', function (error, stdout, stderr) {
-      console.log('stdout: ' + stdout)
-      console.log('stderr: ' + stderr)
       if (error !== null) {
-        console.log('exec error: ' + error)
+        console.log('Could not properly run CMake: ' + error)
       }
     })
   }
 }
 
-let ezGen = new EzGen()
-ezGen.run()
+module.exports = {
+  EzGen: EzGen
+}

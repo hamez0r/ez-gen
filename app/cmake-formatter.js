@@ -129,6 +129,12 @@ CMakeFormatter.prototype = {
     return destinationPath.replace(/\/\//g, '/')
   },
 
+  getBuildDir: function(currentDir, targetPlatform) {
+    let current = currentDir.replace(/\\/g, '/')
+    let build = `${current}/build_${targetPlatform}`
+    return build.replace(/\/\//g, '/')
+  },
+
   getSuppressRegeneration: function() {
     return 'set(CMAKE_SUPPRESS_REGENERATION ON)\n'
   },
