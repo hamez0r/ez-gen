@@ -1,5 +1,7 @@
 'use strict'
 
+let IncludeDirectories = require ('../app/include-directories').IncludeDirectories
+
 function CompilingProjectTranslator(translator) {
   this.translator = translator
 }
@@ -48,6 +50,7 @@ function Translator(fileSystem, cmakeFormatter, pathRepository) {
   this.fileSystem = fileSystem
   this.formatter = cmakeFormatter
   this.pathRepository = pathRepository
+  this.includes = new IncludeDirectories(fileSystem)
 }
 
 Translator.prototype = {
@@ -74,12 +77,19 @@ Translator.prototype = {
     let cmakeContents = ''
     cmakeContents += this.formatter.getCMakeVersion(3.8)
     
-    let projectIncludeDirs = this.getIncludeDirectories(project, dependencies)
-    for (let dir of projectIncludeDirs) {
+    let projectDirs = this.includes.getProjectIncludeDirectories(project)
+    for (let dir of projectDirs) {
       cmakeContents += this.formatter.getIncludeDirectory(dir)
     }
 
-    let projectDirs = this.getProjectOwnIncludeDirectories(project)
+    for (let dependency of dependencies) {
+      let dependencyIncludes = this.includes
+        .getDependencyIncludeDirectories(dependency)
+
+      for (let dir of dependencyIncludes)
+          cmakeContents += this.formatter.getIncludeDirectory(dir)
+    }
+
     for (let dir of projectDirs) {
       cmakeContents += this.formatter.getProjectFiles(dir)
     }
@@ -100,30 +110,6 @@ Translator.prototype = {
       path: this.pathRepository.getProjectCMakeDestination(project.name, workDir),
       cmakeContents: cmakeContents
     }
-  },
-
-  getProjectOwnIncludeDirectories: function(project) {
-    let projectRoot = project.configDirectory
-    return this.fileSystem.listAllSubDirs(projectRoot)
-  },
-
-  getDependencyIncludeDirectories: function(dependency) {
-      let dependencyRootDir = dependency.configDirectory
-      let depenencyPublicDir = dependencyRootDir + '/Public'
-      return [depenencyPublicDir]
-        .concat(this.fileSystem.listAllSubDirs(depenencyPublicDir))
-  },
-
-  getIncludeDirectories: function(project, dependencies) {
-    let projectSubdirs = this.getProjectOwnIncludeDirectories(project)
-
-    let dependenciesDirs = []
-    for (let dependency of dependencies) {
-      dependenciesDirs = dependenciesDirs
-        .concat(this.getDependencyIncludeDirectories(dependency))
-    }
-
-    return projectSubdirs.concat(dependenciesDirs)
   }
 }
 

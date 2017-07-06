@@ -9,30 +9,6 @@ let PathRepository = require('../app/path-repository').PathRepository
 let ProjectsFactory = require('./projects-factory').ProjectsFactory
 
 describe('ProjectTranslator', function() {
-  it('getIncludeDirectories() should return a list representing the include directories for CMakeLists.txt', function() {
-    let projects = ProjectsFactory.createProjectsWithDifferentNames()
-    let reference = ["F:/A/Public", "F:/A/Private", "F:/B/Public"]
-
-    let mockFs = {
-      listAllSubDirs: function(dir) {
-        if (dir === 'F:/A') {
-          return ['F:/A/Public', 'F:/A/Private']
-        } else if (dir === 'F:/B/Public') {
-          return []
-        } else {
-          console.log(dir)
-          throw 'wtf'
-        }
-      }
-    }
-
-    let projectTranslator = new ProjectTranslator(mockFs,
-       new CMakeFormatter(), new PathRepository('win32'))
-    let result = projectTranslator.getIncludeDirectories(projects[0], [projects[1]])
-
-    expect(result).to.deep.equal(reference)
-  })
-
   it('translateCompilingProject() should return the contents of a CMakeLists.txt for a given compiling (Executable, Static or Shared) project', function() {
     let fileSystemMock = {
       listAllSubDirs: function(startDir) {

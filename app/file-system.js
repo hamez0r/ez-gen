@@ -4,7 +4,7 @@ let fs = require('fs')
 let path = require('path')
 
 function FileSystem() {
-  this.separator = process.platform === 'win32' ? '\\' : '/'
+  this.separator = '/'
 }
 
 FileSystem.prototype = {
@@ -21,7 +21,9 @@ FileSystem.prototype = {
       }
     }
 
-    return subDirs
+    return subDirs.map(function(dir) {
+      return dir.replace(/\\/g, '/')
+    })
   },
 
   listAllSubDirsAsRelativePaths: function(startDir) {
@@ -34,7 +36,7 @@ FileSystem.prototype = {
 
 
   getCurrentDirectory: function() {
-    return process.cwd()
+    return process.cwd().replace(/\\/g, '/')
   },
 
   getAppDirectory: function(startDir) {
@@ -83,7 +85,9 @@ function getPathsContaining(fileName, startDir) {
         .concat(getPathsContaining(fileName, path.join(startDir, file)))
   }
 
-  return paths
+  return paths.map(function(dir) {
+    return dir.replace(/\\/g, '/')
+  })
 }
 
 function dirContainsFile(dir, fileName) {
@@ -105,7 +109,9 @@ function readDirRecursive(startDir) {
     }
   }
 
-  return files
+  return files.map(function(file) {
+    return file.replace(/\\/g, '/')
+  })
 }
 
 //console.log(new FileSystem().listAllSubDirs('C:/Workdir/ez-gen'))
