@@ -18,34 +18,31 @@ CMakeFormatter.prototype = {
   },
 
   getIncludeDirectory: function(includeDir) {
-    let formattedDir = includeDir.replace(/\\/g, '/')
-    return `include_directories("${formattedDir}")\n`
+    return `include_directories("${includeDir}")\n`
   },
 
   getProjectFiles: function(fullPath) {
-    let formattedPath = fullPath.replace(/\\/g, '/')
     let globBaseIdentifier = this.identifierCreator
-      .getGlob(formattedPath)
+      .getGlob(fullPath)
 
     let files = ''
-    files += `file(GLOB ${globBaseIdentifier}_H "${formattedPath}/*.h")\n`
-    files += `file(GLOB ${globBaseIdentifier}_HH "${formattedPath}/*.hh")\n`
-    files += `file(GLOB ${globBaseIdentifier}_HPP "${formattedPath}/*.hpp")\n`
-    files += `file(GLOB ${globBaseIdentifier}_HXX "${formattedPath}/*.hxx")\n`
-    files += `file(GLOB ${globBaseIdentifier}_C "${formattedPath}/*.c")\n`
-    files += `file(GLOB ${globBaseIdentifier}_CC "${formattedPath}/*.cc")\n`
-    files += `file(GLOB ${globBaseIdentifier}_CPP "${formattedPath}/*.cpp")\n`
-    files += `file(GLOB ${globBaseIdentifier}_CXX "${formattedPath}/*.cxx")\n`
+    files += `file(GLOB ${globBaseIdentifier}_H "${fullPath}/*.h")\n`
+    files += `file(GLOB ${globBaseIdentifier}_HH "${fullPath}/*.hh")\n`
+    files += `file(GLOB ${globBaseIdentifier}_HPP "${fullPath}/*.hpp")\n`
+    files += `file(GLOB ${globBaseIdentifier}_HXX "${fullPath}/*.hxx")\n`
+    files += `file(GLOB ${globBaseIdentifier}_C "${fullPath}/*.c")\n`
+    files += `file(GLOB ${globBaseIdentifier}_CC "${fullPath}/*.cc")\n`
+    files += `file(GLOB ${globBaseIdentifier}_CPP "${fullPath}/*.cpp")\n`
+    files += `file(GLOB ${globBaseIdentifier}_CXX "${fullPath}/*.cxx")\n`
 
     return files
   },
 
   getSourceGroup: function(fullPath) {
-    let formattedPath = fullPath.replace(/\\/g, '/')
     let sourceGroupIdentifier = this.identifierCreator
-      .getSourceGroup(formattedPath)
+      .getSourceGroup(fullPath)
     let globIdentifier = this.identifierCreator
-      .getGlob(formattedPath)
+      .getGlob(fullPath)
     return `source_group("${sourceGroupIdentifier}" FILES \
 \${${globIdentifier}_H} \${${globIdentifier}_HH} \${${globIdentifier}_HPP} \
 \${${globIdentifier}_HXX} \${${globIdentifier}_C} \${${globIdentifier}_CC} \
@@ -68,7 +65,6 @@ CMakeFormatter.prototype = {
 
     let result = `${command}(${name} ${binaryType}\n`
     for (let subDir of subDirs) {
-      subDir = subDir.replace(/\\/g, '/')
       let identifier = this.identifierCreator.getGlob(subDir)
       result += `    \$\{${identifier}_H}\n`
       result += `    \$\{${identifier}_HH}\n`
@@ -85,24 +81,17 @@ CMakeFormatter.prototype = {
   },
 
   getSubProject: function(projectName, cmakeListsDir) {
-    let dir = cmakeListsDir.replace(/\\/g, '/')
-    dir = `add_subdirectory("${dir}/${projectName}")\n`
-    return dir.replace(/\/\//g, '/')
+    return `add_subdirectory("${cmakeListsDir}/${projectName}")\n`
   },
 
   getLinkDirectory: function(projectDir) {
-    let dir = projectDir.replace(/\\/g, '/')
-    dir = `link_directories("${dir}/Lib")\n`
-    return dir.replace(/\/\//g, '/')
+    return `link_directories("${projectDir}/Lib")\n`
   },
 
   getExternalProjectCustomTarget: function(projectName, projectDir, destinationDir) {
-    let projectPath = projectDir.replace(/\\/g, '/')
-    let destinationPath = destinationDir.replace(/\\/g, '/')
-
     return `add_custom_target(${projectName} ALL
-    COMMAND cmake -E make_directory "${destinationPath}"
-    COMMAND cmake -E copy_directory "${projectPath}/Lib" "${destinationPath}")\n`
+    COMMAND cmake -E make_directory "${destinationDir}"
+    COMMAND cmake -E copy_directory "${projectDir}/Lib" "${destinationDir}")\n`
   },
 
   getSuppressRegeneration: function() {
@@ -110,18 +99,15 @@ CMakeFormatter.prototype = {
   },
 
   getRuntimeOutputDirectory: function(outDir) {
-    let dir = outDir.replace(/\\/g, '/')
-    return `set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${dir}")\n`
+    return `set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${outDir}")\n`
   },
 
   getLibraryOutputDirectory: function(outDir) {
-    let dir = outDir.replace(/\\/g, '/')
-    return `set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${dir}")\n`
+    return `set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${outDir}")\n`
   },
 
   getArchiveOutputDirectory: function(outDir) {
-    let dir = outDir.replace(/\\/g, '/')
-    return `set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${dir}")\n`
+    return `set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${outDir}")\n`
   },
 
   getConfigurations: function(configs) {
@@ -130,15 +116,11 @@ CMakeFormatter.prototype = {
   },
 
   getOutputForConfigurations: function(runtimeDir, libraryDir, archiveDir) {
-    let runtimeOutDir = runtimeDir.replace(/\\/g, '/')
-    let libraryOutDir = libraryDir.replace(/\\/g, '/')
-    let archiveOutDir = archiveDir.replace(/\\/g, '/')
-
     let content = `foreach(OUTPUTCONFIG \${CMAKE_CONFIGURATION_TYPES})
   string(TOUPPER \${OUTPUTCONFIG} OUTPUTCONFIG)
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_\${OUTPUTCONFIG} "${runtimeOutDir}")
-  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_\${OUTPUTCONFIG} "${libraryOutDir}")
-  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_\${OUTPUTCONFIG} "${archiveOutDir}")
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_\${OUTPUTCONFIG} "${runtimeDir}")
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_\${OUTPUTCONFIG} "${libraryDir}")
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_\${OUTPUTCONFIG} "${archiveDir}")
 endforeach()\n`
 
     return content

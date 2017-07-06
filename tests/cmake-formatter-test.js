@@ -7,7 +7,7 @@ let CMakeFormatter = require('../app/cmake-formatter').CMakeFormatter
 
 describe('CMakeFormatter', function() {
   it('getIncludeDirectory()', function() {
-    let directory = 'F:\\B\\Public'
+    let directory = 'F:/B/Public'
     let reference = 'include_directories("F:/B/Public")\n'
     let formatter = new CMakeFormatter()
     let result = formatter.getIncludeDirectory(directory)
@@ -34,7 +34,7 @@ describe('CMakeFormatter', function() {
   })
 
   it('getProjectFiles(fullPath)', function() {
-    let fullPath = 'F:\\A\\Public'
+    let fullPath = 'F:/A/Public'
     let reference = `file(GLOB Public_H "F:/A/Public/*.h")
 file(GLOB Public_HH "F:/A/Public/*.hh")
 file(GLOB Public_HPP "F:/A/Public/*.hpp")
@@ -51,7 +51,7 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
   })
 
   it('getSourceGroup(fullPath)', function() {
-    let fullPath = 'F:\\A\\Public\\Api'
+    let fullPath = 'F:/A/Public/Api'
     let reference = 'source_group("Public\\\\Api" FILES \${PublicApi_H} \${PublicApi_HH} \${PublicApi_HPP} \${PublicApi_HXX} \${PublicApi_C} \${PublicApi_CC} \${PublicApi_CPP} \${PublicApi_CXX})\n'
     let formatter = new CMakeFormatter()
     let result = formatter.getSourceGroup(fullPath)
@@ -72,7 +72,7 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
   it('getBinary(projectName, projectType, subDirs)', function() {
     let projectName = 'MdefDataModel'
     let projectType = 'Static'
-    let subDirs = ['Public', 'Public\\Api']
+    let subDirs = ['Public', 'Public/Api']
     let reference = `add_library(MdefDataModel STATIC
     \${Public_H}
     \${Public_HH}
@@ -101,7 +101,7 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
   it('getSubProject(projectName, cmakeListsDir)', function() {
     let appName = 'MdefToolkit'
     let projectName = 'MdefXml'
-    let cmakeListsDir = 'C:\\Workdir\\SCMotionTextFiles\\build'
+    let cmakeListsDir = 'C:/Workdir/SCMotionTextFiles/build'
     let reference = 'add_subdirectory("C:/Workdir/SCMotionTextFiles/build/MdefXml")\n'
     
     let formatter = new CMakeFormatter()
@@ -111,7 +111,7 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
   })
 
   it('getLinkDirectory(projectDir)', function() {
-    let projectDir = 'C:\\Workdir\\toolkitwbs\\zExternals\\log4cxx'
+    let projectDir = 'C:/Workdir/toolkitwbs/zExternals/log4cxx'
     let reference = 'link_directories("C:/Workdir/toolkitwbs/zExternals/log4cxx/Lib")\n'
     let formatter = new CMakeFormatter()
 
@@ -121,8 +121,8 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
 
   it('getExternalProjectCustomTarget(projectName, projectPath, destinationPath)', function() {
     let projectName = 'log4cxx'
-    let projectPath = 'C:\\Workdir\\toolkitwbs\\zExternals\\log4cxx'
-    let destinationPath = 'C:\\Workdir\\toolkitwbs\\build_win32\\bin'
+    let projectPath = 'C:/Workdir/toolkitwbs/zExternals/log4cxx'
+    let destinationPath = 'C:/Workdir/toolkitwbs/build_win32/bin'
 
     let reference = `add_custom_target(log4cxx ALL
     COMMAND cmake -E make_directory "C:/Workdir/toolkitwbs/build_win32/bin"
@@ -156,7 +156,7 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
   })
 
   it('getRuntimeOutputDirectory(outDir)', function() {
-    let outDir = 'C:\\Workdir\\App\\build_win32\\bin'
+    let outDir = 'C:/Workdir/App/build_win32/bin'
 
     let reference = `set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "C:/Workdir/App/build_win32/bin")\n`
     
@@ -167,7 +167,7 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
   })
 
   it('getLibraryOutputDirectory(outDir)', function() {
-    let outDir = 'C:\\Workdir\\App\\build_win32\\bin'
+    let outDir = 'C:/Workdir/App/build_win32/bin'
 
     let reference = `set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "C:/Workdir/App/build_win32/bin")\n`
     
@@ -189,8 +189,8 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
   })
 
   it('getOutputForConfigurations(runtimeOutDir, libraryOutDir, archiveOutDir', function() {
-    let runtimeOutDir = `C:\\Workdir\\App\\build_win32\\bin`
-    let libraryOutDir = `C:\\Workdir\\App\\build_win32\\bin`
+    let runtimeOutDir = `C:/Workdir/App/build_win32/bin`
+    let libraryOutDir = `C:/Workdir/App/build_win32/bin`
     let archiveOutDir = `Lib`
 
     let reference = `foreach(OUTPUTCONFIG \${CMAKE_CONFIGURATION_TYPES})
