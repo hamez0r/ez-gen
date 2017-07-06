@@ -9,6 +9,7 @@ let NamesValidator = require('./names-validator').NamesValidator
 let AppTranslator = require('./app-translator').AppTranslator
 let ProjectTranslator = require('./project-translator').ProjectTranslator
 let CMakeFormatter = require('./cmake-formatter').CMakeFormatter
+let PathRepository = require('../app/path-repository').PathRepository
 let FileSystem = require('./file-system').FileSystem
 
 function EzGen() {
@@ -47,20 +48,22 @@ EzGen.prototype = {
 
     let cmakeLists = []
     let cmakeFormatter = new CMakeFormatter()
+    let pathRepository = new PathRepository(platform)
 
-    let appTranslator = new AppTranslator(fs, cmakeFormatter)
-    cmakeLists.push(appTranslator.translate(app, platform))
+    let appTranslator = new AppTranslator(fs, cmakeFormatter, pathRepository)
+    cmakeLists.push(appTranslator.translate(app))
 
-    let projectTranslator = new ProjectTranslator(app, fs, cmakeFormatter)
+    let projectTranslator = new ProjectTranslator(fs, cmakeFormatter, pathRepository)
     for (let project of appProjects) {
-      cmakeLists.push(projectTranslator.translate(project, platform))
+      let dependecies = app.getProjectDependencies(project)
+      cmakeLists.push(projectTranslator.translate(project, dependecies))
     }
 
     for (let cmake of cmakeLists) {
       fs.createFile(cmake.path, cmake.cmakeContents)
     } 
 
-    let buildDir = cmakeFormatter.getBuildDir(currentDir, platform)
+    let buildDir = pathRepository.getBuildDir(currentDir)
     fs.createDirectory(buildDir)
 
     // exec('cmake', ['../build'], {cwd: buildDir})

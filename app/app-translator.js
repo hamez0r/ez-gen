@@ -1,22 +1,23 @@
 'use strict'
 
-function AppTranslator(fileSystem, cmakeFormatter) {
-  this.translator = new Translator(fileSystem, cmakeFormatter)
+function AppTranslator(fileSystem, cmakeFormatter, pathRepository) {
+  this.translator = new Translator(fileSystem, cmakeFormatter, pathRepository)
 }
 
 AppTranslator.prototype = {
-  translate: function(app, targetPlatform) {
-    return this.translator.translate(app, targetPlatform)
+  translate: function(app) {
+    return this.translator.translate(app)
   }
 }
 
-function Translator(fileSystem, cmakeFormatter) {
+function Translator(fileSystem, cmakeFormatter, pathRepository) {
   this.fileSystem = fileSystem
   this.formatter = cmakeFormatter
+  this.pathRepository = pathRepository
 }
 
 Translator.prototype = {
-  translate: function(app, targetPlatform) {
+  translate: function(app) {
     let cmakeContents = ''
 
     cmakeContents += this.formatter.getCMakeVersion(3.8)
@@ -24,7 +25,7 @@ Translator.prototype = {
     cmakeContents += this.formatter.getProjectDefinition(app.name)
 
     let workDir = this.fileSystem.getCurrentDirectory()
-    let binDir = this.formatter.getBuildBinDirectory(workDir, targetPlatform)
+    let binDir = this.pathRepository.getBuildBinDirectory(workDir)
 
     cmakeContents += this.formatter.getRuntimeOutputDirectory(binDir)
     cmakeContents += this.formatter.getLibraryOutputDirectory(binDir)
@@ -41,13 +42,13 @@ Translator.prototype = {
       cmakeContents += this.formatter.getLinkDirectory(project.configDirectory)
     }
 
-    let appDestinationDir = this.formatter.getAppDestinationDir(workDir)
+    let appDestinationDir = this.pathRepository.getAppDestinationDir(workDir)
     for (let project of app.projects) {
       cmakeContents += this
         .formatter.getSubProject(project.name, appDestinationDir)
     }
 
-    let appDestination = this.formatter.getAppCMakeDestination(workDir)
+    let appDestination = this.pathRepository.getAppCMakeDestination(workDir)
 
     return {
       path: appDestination,

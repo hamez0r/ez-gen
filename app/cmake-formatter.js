@@ -105,36 +105,6 @@ CMakeFormatter.prototype = {
     COMMAND cmake -E copy_directory "${projectPath}/Lib" "${destinationPath}")\n`
   },
 
-  getBuildBinDirectory: function(workDirectory, targetPlatform) {
-    let workDirPath = workDirectory.replace(/\\/g, '/')
-    workDirPath = `${workDirPath}/build_${targetPlatform}/bin`
-    return workDirPath.replace(/\/\//g, '/')
-  },
-
-  getProjectCMakeDestination: function(projectName, workDirectory) {
-    let destinationPath = workDirectory.replace(/\\/g, '/')
-    destinationPath = `${destinationPath}/build/${projectName}/CMakeLists.txt`
-    return destinationPath.replace(/\/\//g, '/')
-  },
-
-  getAppCMakeDestination: function(workDir) {
-    let destinationPath = workDir.replace(/\\/g, '/')
-    destinationPath = `${destinationPath}/build/CMakeLists.txt`
-    return destinationPath.replace(/\/\//g, '/')
-  },
-
-  getAppDestinationDir: function(workDir) {
-    let destinationPath = workDir.replace(/\\/g, '/')
-    destinationPath = `${destinationPath}/build`
-    return destinationPath.replace(/\/\//g, '/')
-  },
-
-  getBuildDir: function(currentDir, targetPlatform) {
-    let current = currentDir.replace(/\\/g, '/')
-    let build = `${current}/build_${targetPlatform}`
-    return build.replace(/\/\//g, '/')
-  },
-
   getSuppressRegeneration: function() {
     return 'set(CMAKE_SUPPRESS_REGENERATION ON)\n'
   },

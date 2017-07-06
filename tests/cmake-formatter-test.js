@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 let chai = require('chai')
 let expect = chai.expect
@@ -134,30 +134,7 @@ file(GLOB Public_CXX "F:/A/Public/*.cxx")
 
     expect(result).to.deep.equal(reference)
   })
-
-  it('getBuildBinDirectory(workDirectory, targetPlatform)', function() {
-    let workDirectory = 'C:\\Workdir\\toolkitwbs'
-    let targetPlatform = 'win32'
-    let reference = 'C:/Workdir/toolkitwbs/build_win32/bin'
-
-    let formatter = new CMakeFormatter()
-    let result = formatter.getBuildBinDirectory(workDirectory, targetPlatform)
-
-    expect(result).to.deep.equal(reference)
-  })
-
-  it('getProjectCMakeDestination(projectName, workDirectory)', function() {
-    let projectName = 'MdefXml'
-    let workDirectory = 'C:\\Workdir\\toolkitwbs'
-
-    let reference =  'C:/Workdir/toolkitwbs/build/MdefXml/CMakeLists.txt'
-
-    let formatter = new CMakeFormatter()
-    let result = formatter.getProjectCMakeDestination(projectName, workDirectory)
-
-    expect(result).to.deep.equal(reference)
-  })
-
+  
   it('getSuppressRegeneration()', function() {
     let reference = 'set(CMAKE_SUPPRESS_REGENERATION ON)\n'
 
@@ -228,27 +205,5 @@ endforeach()\n`
       .getOutputForConfigurations(runtimeOutDir, libraryOutDir, archiveOutDir)
     
     expect(result).to.deep.equal(reference)      
-  })
-
-  it('getAppDestinationDir(workDir)', function() {
-    let workDir = 'C:\\Workdir\\App'
-
-    let reference = 'C:/Workdir/App/build'
-
-    let formatter = new CMakeFormatter()
-    let result = formatter.getAppDestinationDir(workDir)
-
-    expect(result).to.deep.equal(reference)
-  })
-
-  it('getAppCMakeDestination(workDir)', function() {
-    let workDir = 'C:\\Workdir\\App'
-
-    let reference = 'C:/Workdir/App/build/CMakeLists.txt'
-
-    let formatter = new CMakeFormatter()
-    let result = formatter.getAppCMakeDestination(workDir)
-
-    expect(result).to.deep.equal(reference)
   })
 })

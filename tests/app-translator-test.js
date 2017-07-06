@@ -6,9 +6,10 @@ let App = require('../app/app').App
 let AppTranslator = require('../app/app-translator').Translator
 let ProjectsFactory = require('./projects-factory').ProjectsFactory
 let CMakeFormatter = require('../app/cmake-formatter').CMakeFormatter
+let PathRepository = require('../app/path-repository').PathRepository
 
 describe('AppTranslator', function() {
-  it('translate(app, targetPlatform) should return the contents for the app CMakeLists.txt', function() {
+  it('translate(app) should return the contents for the app CMakeLists.txt', function() {
     let projects = ProjectsFactory.createProjectsForApp()
     let app = new App({name: 'TheApp'}, projects, 'F:\\')
 
@@ -42,8 +43,9 @@ add_subdirectory("F:/build/Xerces")
       cmakeContents: cmakeContents
     }
 
-    let appTranslator = new AppTranslator(mockFileSystem, new CMakeFormatter())
-    let result = appTranslator.translate(app, 'win32')
+    let appTranslator = new AppTranslator(mockFileSystem, new CMakeFormatter(),
+       new PathRepository('win32'))
+    let result = appTranslator.translate(app)
 
     expect(result).to.deep.equal(reference) 
   }) 

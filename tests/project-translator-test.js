@@ -5,14 +5,13 @@ let expect = chai.expect
 let Project = require('../app/project').Project
 let ProjectTranslator = require('../app/project-translator').Translator
 let CMakeFormatter = require('../app/cmake-formatter').CMakeFormatter
-let App = require('../app/app').App
+let PathRepository = require('../app/path-repository').PathRepository
 let ProjectsFactory = require('./projects-factory').ProjectsFactory
 
 describe('ProjectTranslator', function() {
   it('getIncludeDirectories() should return a list representing the include directories for CMakeLists.txt', function() {
     let projects = ProjectsFactory.createProjectsWithDifferentNames()
     let reference = ["F:/A/Public", "F:/A/Private", "F:/B/Public"]
-    let app = new App({name: 'foo'}, projects, null)
 
     let mockFs = {
       listAllSubDirs: function(dir) {
@@ -27,8 +26,9 @@ describe('ProjectTranslator', function() {
       }
     }
 
-    let projectTranslator = new ProjectTranslator(app, mockFs, new CMakeFormatter())
-    let result = projectTranslator.getIncludeDirectories(projects[0])
+    let projectTranslator = new ProjectTranslator(mockFs,
+       new CMakeFormatter(), new PathRepository('win32'))
+    let result = projectTranslator.getIncludeDirectories(projects[0], [projects[1]])
 
     expect(result).to.deep.equal(reference)
   })
@@ -49,10 +49,9 @@ describe('ProjectTranslator', function() {
     }
 
     let projects = ProjectsFactory.createProjectsWithDifferentNames()
-    let app = new App({name: 'foo'}, projects, null)
-    let translator = new ProjectTranslator(app, fileSystemMock, new CMakeFormatter())
-    let targetPlatform = 'win32'
-    let contents = translator.translateCompilingProject(projects[0], targetPlatform)
+    let translator = new ProjectTranslator(fileSystemMock,
+       new CMakeFormatter(), new PathRepository('win32'))
+    let contents = translator.translateCompilingProject(projects[0], [projects[1]])
 
     let cmakeContents = `cmake_minimum_required(VERSION 3.8)
 include_directories("F:/A/Public")
@@ -152,10 +151,9 @@ target_link_libraries(MdefDataModel MdefXml)
     let externalProject = ProjectsFactory.createExternalSharedProject()
     let projects = [externalProject]
 
-    let app = new App({name: 'foo'}, projects, null)
-    let translator = new ProjectTranslator(app, fileSystemMock, new CMakeFormatter())
-    let targetPlatform = 'win32'
-    let contents = translator.translateExternalProject(projects[0], targetPlatform)
+    let translator = new ProjectTranslator(fileSystemMock,
+       new CMakeFormatter(), new PathRepository('win32'))
+    let contents = translator.translateExternalProject(projects[0], [])
 
     let cmakeContents = `cmake_minimum_required(VERSION 3.8)
 add_custom_target(Xerces ALL

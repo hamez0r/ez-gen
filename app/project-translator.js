@@ -5,8 +5,8 @@ function CompilingProjectTranslator(translator) {
 }
 
 CompilingProjectTranslator.prototype = {
-  translate: function(project, targetPlatform) {
-    return this.translator.translateCompilingProject(project, targetPlatform)
+  translate: function(project, dependencies) {
+    return this.translator.translateCompilingProject(project, dependencies)
   }
 }
 
@@ -15,13 +15,13 @@ function ExternalProjectTranslator(translator) {
 }
 
 ExternalProjectTranslator.prototype = {
-  translate: function(project, targetPlatform) {
-    return this.translator.translateExternalProject(project, targetPlatform)
+  translate: function(project, dependencies) {
+    return this.translator.translateExternalProject(project, dependencies)
   }
 }
 
-function ProjectTranslator(app, fileSystem, cmakeFormatter) {
-  let translator = new Translator(app, fileSystem, cmakeFormatter)
+function ProjectTranslator(fileSystem, cmakeFormatter, pathRepository) {
+  let translator = new Translator(fileSystem, cmakeFormatter, pathRepository)
 
   let compilingProjectTranslator = new CompilingProjectTranslator(translator)
   let externalProjectTranslator = new ExternalProjectTranslator(translator)
@@ -39,42 +39,42 @@ function ProjectTranslator(app, fileSystem, cmakeFormatter) {
 }
 
 ProjectTranslator.prototype = {
-  translate(project, targetPlatform) {
-    return this.translators.get(project.type).translate(project, targetPlatform)
+  translate(project, dependencies) {
+    return this.translators.get(project.type).translate(project, dependencies)
   }
 }
 
-function Translator(app, fileSystem, cmakeFormatter) {
-  this.app = app
+function Translator(fileSystem, cmakeFormatter, pathRepository) {
   this.fileSystem = fileSystem
   this.formatter = cmakeFormatter
+  this.pathRepository = pathRepository
 }
 
 Translator.prototype = {
-  translateExternalProject: function(project, targetPlatform) {
+  translateExternalProject: function(project, dependencies) {
     let cmakeContents = ''
     cmakeContents += this.formatter.getCMakeVersion(3.8)
 
     let workDir = this.fileSystem.getCurrentDirectory()
     let projectName = project.name
     let projectDir = project.configDirectory
-    let destinationDir = this.formatter
-      .getBuildBinDirectory(workDir, targetPlatform)
+    let destinationDir = this.pathRepository
+      .getBuildBinDirectory(workDir)
 
     cmakeContents += this.formatter
       .getExternalProjectCustomTarget(projectName, projectDir, destinationDir)
 
     return {
-      path: this.formatter.getProjectCMakeDestination(project.name, workDir),
+      path: this.pathRepository.getProjectCMakeDestination(project.name, workDir),
       cmakeContents: cmakeContents
     }
   },
 
-  translateCompilingProject: function(project, targetPlatform) {
+  translateCompilingProject: function(project, dependencies) {
     let cmakeContents = ''
     cmakeContents += this.formatter.getCMakeVersion(3.8)
     
-    let projectIncludeDirs = this.getIncludeDirectories(project)
+    let projectIncludeDirs = this.getIncludeDirectories(project, dependencies)
     for (let dir of projectIncludeDirs) {
       cmakeContents += this.formatter.getIncludeDirectory(dir)
     }
@@ -97,7 +97,7 @@ Translator.prototype = {
     let workDir = this.fileSystem.getCurrentDirectory()
 
     return {
-      path: this.formatter.getProjectCMakeDestination(project.name, workDir),
+      path: this.pathRepository.getProjectCMakeDestination(project.name, workDir),
       cmakeContents: cmakeContents
     }
   },
@@ -114,11 +114,11 @@ Translator.prototype = {
         .concat(this.fileSystem.listAllSubDirs(depenencyPublicDir))
   },
 
-  getIncludeDirectories: function(project) {
+  getIncludeDirectories: function(project, dependencies) {
     let projectSubdirs = this.getProjectOwnIncludeDirectories(project)
 
     let dependenciesDirs = []
-    for (let dependency of this.app.getProjectDependencies(project)) {
+    for (let dependency of dependencies) {
       dependenciesDirs = dependenciesDirs
         .concat(this.getDependencyIncludeDirectories(dependency))
     }
