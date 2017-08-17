@@ -194,6 +194,16 @@ ProjectsFactory = {
     }, 'F:/ExternalProject'))
 
     return projects
+  },
+
+  createProjectsToRunAfterBuild: function () {
+    let projects = this.createProjectsWithDifferentNames();
+
+    let projectToRun = projects[0]
+    projectToRun.type = 'Executable'
+    projectToRun.runAfterBuild = true
+
+    return projects
   }
 }
 

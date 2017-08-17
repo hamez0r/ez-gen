@@ -77,7 +77,7 @@ CMakeFormatter.prototype = {
     }
 
     result += ')\n'
-    return result.replace('EXECUTABLE', '')
+    return result.replace(' EXECUTABLE', '')
   },
 
   getSubProject: function(projectName, cmakeListsDir) {
@@ -124,6 +124,10 @@ CMakeFormatter.prototype = {
 endforeach()\n`
 
     return content
+  },
+
+  getRunAfterBuild: function(projectName) {
+    return `add_custom_target(run${projectName} ALL COMMAND ${projectName})\n`
   }
 }
 

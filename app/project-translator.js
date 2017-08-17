@@ -104,6 +104,10 @@ Translator.prototype = {
     cmakeContents += this.formatter
       .getLinkLibraries(project.name, project.dependencies)
 
+    if (project.runAfterBuild) {
+      cmakeContents += this.formatter.getRunAfterBuild(project.name)
+    }
+
     let workDir = this.fileSystem.getCurrentDirectory()
 
     return {

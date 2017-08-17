@@ -206,4 +206,15 @@ endforeach()\n`
     
     expect(result).to.deep.equal(reference)      
   })
+
+  it('getRunAfterBuild(projectName)', function() {
+    let projectName = 'MdefValidationTests'
+
+    let reference = 'add_custom_target(runMdefValidationTests ALL COMMAND MdefValidationTests)\n'
+
+    let formatter = new CMakeFormatter()
+    let result = formatter.getRunAfterBuild(projectName)
+
+    expect(result).to.deep.equal(reference)
+  })
 })
