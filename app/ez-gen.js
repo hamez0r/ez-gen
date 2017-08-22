@@ -55,6 +55,10 @@ EzGen.prototype = {
 
     let projectTranslator = new ProjectTranslator(fs, cmakeFormatter, pathRepository)
     for (let project of appProjects) {
+      // Since there's nothing to do for ExternalStatic, we're not
+      // sending it to the translator
+      if (project.type === 'ExternalStatic') continue
+
       let dependecies = app.getProjectDependencies(project)
       cmakeLists.push(projectTranslator.translate(project, dependecies))
     }
@@ -65,8 +69,6 @@ EzGen.prototype = {
 
     let buildDir = pathRepository.getBuildDir(currentDir)
     fs.createDirectory(buildDir)
-
-    // exec('cmake', ['../build'], {cwd: buildDir})
 
     process.chdir(buildDir)
     let child = exec('cmake ../build', function (error, stdout, stderr) {

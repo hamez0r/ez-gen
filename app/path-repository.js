@@ -33,6 +33,12 @@ PathRepository.prototype = {
     let current = currentDir.replace(/\\/g, '/')
     let build = `${current}/build_${this.targetPlatform}`
     return build.replace(/\/\//g, '/')
+  },
+
+  getInstallDir: function(currentDir) {
+    let current = currentDir.replace(/\\/g, '/')
+    let installDir = `${current}/build_view`
+    return installDir.replace(/\/\//g, '/')
   }
 }
 

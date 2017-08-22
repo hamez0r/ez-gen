@@ -35,7 +35,6 @@ function ProjectTranslator(fileSystem, cmakeFormatter, pathRepository) {
   translators.set('Shared', compilingProjectTranslator)
 
   translators.set('ExternalShared', externalProjectTranslator)
-  translators.set('ExternalStatic', externalProjectTranslator)
 
   this.translators = translators
 }
@@ -61,11 +60,22 @@ Translator.prototype = {
     let workDir = this.fileSystem.getCurrentDirectory()
     let projectName = project.name
     let projectDir = project.configDirectory
-    let destinationDir = this.pathRepository
-      .getBuildBinDirectory(workDir)
+
+    let destinationDir = this.pathRepository.getBuildBinDirectory(workDir)
+    if (project.installDir)
+      destinationDir = destinationDir.append(`/${project.installDir}`)
 
     cmakeContents += this.formatter
       .getExternalProjectCustomTarget(projectName, projectDir, destinationDir)
+
+    let installDir = this.pathRepository.getInstallDir(workDir)
+    if (project.installDir)
+      installDir = installDir.append(`/${project.installDir}`)
+
+    let projectLibsDir = project.configDirectory + `/Lib`
+
+    cmakeContents += this.formatter
+      .getExternalProjectInstall(projectLibsDir, installDir)
 
     return {
       path: this.pathRepository.getProjectCMakeDestination(project.name, workDir),
@@ -109,6 +119,15 @@ Translator.prototype = {
     }
 
     let workDir = this.fileSystem.getCurrentDirectory()
+
+    if (!project.isStatic()) {
+      let installDir = this.pathRepository.getInstallDir(workDir)
+      if (project.installDir)
+        installDir = installDir.append(`/${project.installDir}`)
+
+      cmakeContents += 
+        this.formatter.getCompilingProjectInstall(project.name, installDir)
+    }
 
     return {
       path: this.pathRepository.getProjectCMakeDestination(project.name, workDir),

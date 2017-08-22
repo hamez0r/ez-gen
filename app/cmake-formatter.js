@@ -128,6 +128,18 @@ endforeach()\n`
 
   getRunAfterBuild: function(projectName) {
     return `add_custom_target(run${projectName} ALL COMMAND ${projectName})\n`
+  },
+
+  getCompilingProjectInstall: function(projectName, installDir) {
+    return `install(TARGETS ${projectName} RUNTIME DESTINATION "${installDir}")\n`
+  },
+
+  getExternalProjectInstall: function(libsDir, installDir) {
+    let installCommand = '';
+    installCommand += `FILE(GLOB LIBRARIES "${libsDir}/*.*")\n`
+    installCommand += `INSTALL(FILES \${LIBRARIES} DESTINATION "${installDir}")\n`
+
+    return installCommand
   }
 }
 
