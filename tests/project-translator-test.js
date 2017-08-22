@@ -135,6 +135,8 @@ target_link_libraries(MdefDataModel MdefXml)
 add_custom_target(Xerces ALL
     COMMAND cmake -E make_directory "F:/A/build_win32/bin"
     COMMAND cmake -E copy_directory "F:/A/App/Project/Lib" "F:/A/build_win32/bin")
+FILE(GLOB LIBRARIES "F:/A/App/Project/Lib/*.*")
+INSTALL(FILES \${LIBRARIES} DESTINATION "F:/A/build_view")
 `
 
     let reference = {
@@ -245,6 +247,7 @@ add_executable(MdefDataModel
 )
 target_link_libraries(MdefDataModel MdefXml)
 add_custom_target(runMdefDataModel ALL COMMAND MdefDataModel)
+install(TARGETS MdefDataModel RUNTIME DESTINATION "F:/build_view")
 `
   let reference = {
     path: 'F:/build/MdefDataModel/CMakeLists.txt',

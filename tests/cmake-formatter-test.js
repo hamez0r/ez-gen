@@ -217,4 +217,29 @@ endforeach()\n`
 
     expect(result).to.deep.equal(reference)
   })
+
+  it('getCompilingProjectInstall()', function() {
+    let projectName = 'MdefToolkit'
+    let installDir = 'F:/Workdir/SCMotionTextFiles/build_view'
+
+    let reference = 'install(TARGETS MdefToolkit RUNTIME DESTINATION "F:/Workdir/SCMotionTextFiles/build_view")\n'
+
+    let formatter = new CMakeFormatter()
+    let result = formatter.getCompilingProjectInstall(projectName, installDir)
+
+    expect(result).to.deep.equal(reference)
+  })
+
+  it('getExternalProjectInstall()', function() {
+    let libsDir = 'F:/Workdir/SCMotionTextFiles/zExternals/log4cxx/Lib'
+    let installDir = 'F:/Workdir/SCMotionTextFiles/build_view'
+    
+    let reference = `FILE(GLOB LIBRARIES "F:/Workdir/SCMotionTextFiles/zExternals/log4cxx/Lib/*.*")
+INSTALL(FILES \${LIBRARIES} DESTINATION "F:/Workdir/SCMotionTextFiles/build_view")\n`
+
+    let formatter = new CMakeFormatter()
+    let result = formatter.getExternalProjectInstall(libsDir, installDir)
+
+    expect(result).to.deep.equal(reference)
+  })
 })
