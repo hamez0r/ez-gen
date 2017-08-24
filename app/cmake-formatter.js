@@ -56,6 +56,13 @@ CMakeFormatter.prototype = {
       result += ` ${dependency}`
     }
     result += ')\n'
+
+    result += `add_dependencies(${projectName}`
+    for (let dependency of dependencies) {
+      result += ` ${dependency}`
+    }
+    result += ')\n'
+
     return result
   },
 

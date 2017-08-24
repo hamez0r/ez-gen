@@ -7,8 +7,8 @@ function CompilingProjectTranslator(translator) {
 }
 
 CompilingProjectTranslator.prototype = {
-  translate: function(project, dependencies) {
-    return this.translator.translateCompilingProject(project, dependencies)
+  translate: function(project, using, dependencies) {
+    return this.translator.translateCompilingProject(project, using, dependencies)
   }
 }
 
@@ -17,7 +17,7 @@ function ExternalProjectTranslator(translator) {
 }
 
 ExternalProjectTranslator.prototype = {
-  translate: function(project, dependencies) {
+  translate: function(project, using, dependencies) {
     return this.translator.translateExternalProject(project, dependencies)
   }
 }
@@ -40,8 +40,8 @@ function ProjectTranslator(fileSystem, cmakeFormatter, pathRepository) {
 }
 
 ProjectTranslator.prototype = {
-  translate(project, dependencies) {
-    return this.translators.get(project.type).translate(project, dependencies)
+  translate(project, using, dependencies) {
+    return this.translators.get(project.type).translate(project, using, dependencies)
   }
 }
 
@@ -53,7 +53,7 @@ function Translator(fileSystem, cmakeFormatter, pathRepository) {
 }
 
 Translator.prototype = {
-  translateExternalProject: function(project, dependencies) {
+  translateExternalProject: function(project, using, dependencies) {
     let cmakeContents = ''
     cmakeContents += this.formatter.getCMakeVersion(3.8)
 
@@ -83,7 +83,7 @@ Translator.prototype = {
     }
   },
 
-  translateCompilingProject: function(project, dependencies) {
+  translateCompilingProject: function(project, using, dependencies) {
     let cmakeContents = ''
     cmakeContents += this.formatter.getCMakeVersion(3.8)
     
@@ -97,7 +97,15 @@ Translator.prototype = {
         .getDependencyIncludeDirectories(dependency)
 
       for (let dir of dependencyIncludes)
-          cmakeContents += this.formatter.getIncludeDirectory(dir)
+        cmakeContents += this.formatter.getIncludeDirectory(dir)
+    }
+
+    for (let dependency of using) {
+      let dependencyIncludes = this.includes
+        .getDependencyIncludeDirectories(dependency)
+
+      for (let dir of dependencyIncludes)
+        cmakeContents += this.formatter.getIncludeDirectory(dir)
     }
 
     for (let dir of projectDirs) {

@@ -32,6 +32,17 @@ App.prototype = {
       }))
 
     return dependencies
+  },
+
+  getProjectUsing(project) {
+    let dependencies = []
+
+    for (let dependency of project.using)
+      dependencies.push(this.projects.find(function(dependencyProject) {
+        return dependency === dependencyProject.name
+      }))
+
+    return dependencies
   }
 }
 

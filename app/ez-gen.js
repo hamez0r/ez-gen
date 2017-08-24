@@ -59,8 +59,9 @@ EzGen.prototype = {
       // sending it to the translator
       if (project.type === 'ExternalStatic') continue
 
+      let using = app.getProjectUsing(project)
       let dependecies = app.getProjectDependencies(project)
-      cmakeLists.push(projectTranslator.translate(project, dependecies))
+      cmakeLists.push(projectTranslator.translate(project, using, dependecies))
     }
 
     for (let cmake of cmakeLists) {
@@ -71,7 +72,7 @@ EzGen.prototype = {
     fs.createDirectory(buildDir)
 
     process.chdir(buildDir)
-    let child = exec('cmake ../build', function (error, stdout, stderr) {
+    let child = exec('cmake ../build -G"Visual Studio 14 Win64', function (error, stdout, stderr) {
       if (error !== null) {
         console.log('Could not properly run CMake: ' + error)
       }
