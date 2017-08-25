@@ -44,6 +44,7 @@ Translator.prototype = {
 
     let appDestinationDir = this.pathRepository.getAppDestinationDir(workDir)
     for (let project of app.projects) {
+      if (project.type === 'ExternalStatic') continue
       cmakeContents += this
         .formatter.getSubProject(project.name, appDestinationDir)
     }

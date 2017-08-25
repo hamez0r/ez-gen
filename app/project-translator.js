@@ -119,8 +119,21 @@ Translator.prototype = {
     cmakeContents += this.formatter
       .getBinary(project.name, project.type, projectDirs)
 
+    let addDependencies = []
+    for (let proj of dependencies) {
+      if (!(proj.type === 'ExternalStatic')) addDependencies.push(proj.name)
+    }
+
+    let targetLinkLibs = []
+    for (let proj of dependencies) {
+      targetLinkLibs.push(proj.name)
+    }
+
     cmakeContents += this.formatter
-      .getLinkLibraries(project.name, project.dependencies)
+      .getLinkTargets(project.name, targetLinkLibs)
+
+    cmakeContents += this.formatter
+      .getLinkDependencies(project.name, addDependencies)
 
     if (project.runAfterBuild) {
       cmakeContents += this.formatter.getRunAfterBuild(project.name)

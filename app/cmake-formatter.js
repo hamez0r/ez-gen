@@ -49,17 +49,22 @@ CMakeFormatter.prototype = {
 \${${globIdentifier}_CPP} \${${globIdentifier}_CXX})\n`
   },
 
-  getLinkLibraries: function(projectName, dependencies) {
+  getLinkDependencies: function(projectName, dependencies) {    
     if (dependencies.length == 0) return ''
-    let result = `target_link_libraries(${projectName}`
+    let result = `add_dependencies(${projectName}`
     for (let dependency of dependencies) {
       result += ` ${dependency}`
     }
     result += ')\n'
 
-    result += `add_dependencies(${projectName}`
-    for (let dependency of dependencies) {
-      result += ` ${dependency}`
+    return result
+  },
+
+  getLinkTargets: function(projectName, linkTargets) {
+    if (linkTargets.length == 0) return ''
+    let result = `target_link_libraries(${projectName}`
+    for (let linkTarget of linkTargets) {
+      result += ` ${linkTarget}`
     }
     result += ')\n'
 
