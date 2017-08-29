@@ -165,7 +165,7 @@ CMakeIdentifierCreator.prototype = {
 
     if (directories.length > 1) {
       let startWord = directories.find(function(word) {
-        return word === 'Public' || word === 'Private'
+        return word === 'PublicFiles' || word === 'Private'
       })
 
       let startWordPosition = directories.indexOf(startWord)
@@ -184,7 +184,7 @@ CMakeIdentifierCreator.prototype = {
 
     if (directories.length > 1) {
       let startWord = directories.find(function(word) {
-        return word === 'Public' || word === 'Private'
+        return word === 'PublicFiles' || word === 'Private'
       })
 
       let startWordPosition = directories.indexOf(startWord)
@@ -204,7 +204,7 @@ let foo = function(directoryPath, cb) {
 
   if (directories.length > 1) {
     let startWord = directories.find(function(word) {
-      return word === 'Public' || word === 'Private'
+      return word === 'PublicFiles' || word === 'Private'
     })
 
     let startWordPosition = directories.indexOf(startWord)

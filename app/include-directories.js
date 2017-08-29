@@ -7,7 +7,7 @@ function IncludeDirectories(fileSystem) {
 IncludeDirectories.prototype = {
  getDependencyIncludeDirectories: function(dependency) {
     let dependencyRootDir = dependency.configDirectory
-    let depenencyPublicDir = dependencyRootDir + '/Public'
+    let depenencyPublicDir = dependencyRootDir + '/PublicFiles'
     return [depenencyPublicDir]
       .concat(this.fileSystem.listAllSubDirs(depenencyPublicDir))
  },
