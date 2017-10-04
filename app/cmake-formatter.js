@@ -142,6 +142,11 @@ endforeach()\n`
     return `add_custom_target(run${projectName} ALL COMMAND ${projectName})\n`
   },
 
+  getAdditionalCmake: function(cmakeCommands) {
+    let cmakeContents = cmakeCommands.join('\n')
+    return cmakeContents + '\n'
+  },
+
   getCompilingProjectInstall: function(projectName, installDir) {
     return `install(TARGETS ${projectName} RUNTIME DESTINATION "${installDir}")\n`
   },

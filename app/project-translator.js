@@ -139,6 +139,8 @@ Translator.prototype = {
       cmakeContents += this.formatter.getRunAfterBuild(project.name)
     }
 
+    cmakeContents += this.formatter.getAdditionalCmake(project.additionalCMakeCommands)
+
     let workDir = this.fileSystem.getCurrentDirectory()
 
     if (!project.isStatic()) {
