@@ -143,8 +143,12 @@ endforeach()\n`
   },
 
   getAdditionalCmake: function(cmakeCommands) {
-    let cmakeContents = cmakeCommands.join('\n')
-    return cmakeContents + '\n'
+    if (cmakeCommands.length > 0) {
+      let cmakeContents = cmakeCommands.join('\n')
+      return cmakeContents + '\n'
+    } else {
+      return ''
+    }
   },
 
   getCompilingProjectInstall: function(projectName, installDir) {
