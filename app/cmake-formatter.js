@@ -164,7 +164,11 @@ endforeach()\n`
   },
 
   getCompilingProjectInstall: function(projectName, installDir) {
-    return `install(TARGETS ${projectName} RUNTIME DESTINATION "${installDir}")\n`
+    let install = `install(TARGETS ${projectName} LIBRARY DESTINATION "${installDir}"
+            ARCHIVE DESTINATION "${installDir}"
+            RUNTIME DESTINATION "${installDir}")\n`
+
+    return install
   },
 
   getExternalProjectInstall: function(libsDir, installDir) {
