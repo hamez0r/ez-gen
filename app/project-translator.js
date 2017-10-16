@@ -84,7 +84,6 @@ Translator.prototype = {
   },
 
   translateCompilingProject: function(project, using, dependencies) {
-      console.log('Translating ' + project.name)
     let cmakeContents = ''
     cmakeContents += this.formatter.getCMakeVersion(2.8)
     
@@ -102,7 +101,6 @@ Translator.prototype = {
     }
 
     for (let dependency of using) {
-        console.log(dependency)
       let dependencyIncludes = this.includes
         .getDependencyIncludeDirectories(dependency)
 
