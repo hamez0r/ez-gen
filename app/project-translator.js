@@ -85,7 +85,7 @@ Translator.prototype = {
 
   translateCompilingProject: function(project, using, dependencies) {
     let cmakeContents = ''
-    cmakeContents += this.formatter.getCMakeVersion(3.8)
+    cmakeContents += this.formatter.getCMakeVersion(3.6)
     
     let projectDirs = this.includes.getProjectIncludeDirectories(project)
     for (let dir of projectDirs) {
