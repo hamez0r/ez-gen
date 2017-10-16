@@ -49,7 +49,7 @@ Translator.prototype = {
         .formatter.getSubProject(project.name, appDestinationDir)
     }
 
-    cmakeContents += `add_compile_options(-std=c++11)`
+    cmakeContents += `add_compile_options(-std=c++11)\n`
 
     let appDestination = this.pathRepository.getAppCMakeDestination(workDir)
 
