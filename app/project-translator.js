@@ -125,21 +125,17 @@ Translator.prototype = {
     }
 
     let targetLinkLibs = []
+    let targetLinkExternalLibs = [] 
     for (let proj of dependencies) {
-      targetLinkLibs.push(proj.name)
+      if (!proj.isExternal()) targetLinkLibs.push(proj.name)
+      else targetLinkExternalLibs.push(proj.name)
     }
 
-    for (let dependency of dependencies) {
-      if (!dependency.type === 'ExternalStatic') {
-        cmakeContents += this.formatter
-          .getLinkTargets(project.name, targetLinkLibs)
-      } else {
-        cmakeContents += `target_link_libraries(${project.name} ${dependency.name} ${dependency.name}d)\n`
-      }
-    }
+    cmakeContents += this.formatter
+      .getLinkTargets(project.name, targetLinkLibs)
 
-    // cmakeContents += this.formatter
-    //   .getLinkTargets(project.name, targetLinkLibs)
+    cmakeContents += this.formatter
+      .getExternalLinkTargets(project.name, targetLinkExternalLibs)
 
     cmakeContents += this.formatter
       .getLinkDependencies(project.name, addDependencies)

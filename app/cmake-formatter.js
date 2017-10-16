@@ -71,6 +71,18 @@ CMakeFormatter.prototype = {
     return result
   },
 
+  // External projects will come as 2 binaries: debug and release
+  getExternalLinkTargets: function(projectName, linkTargets) {
+    if (linkTargets.length == 0) return ''
+    let result = `target_link_libraries(${projectName}`
+    for (let linkTarget of linkTargets) {
+      result += ` debug ${linkTarget}d optimized ${linkTarget}`
+    }
+    result += ')\n'
+
+    return result
+  },
+
   getBinary: function(name, type, subDirs) {
     let command = this.binaryCommand.get(type)
     let binaryType = type.toUpperCase()
