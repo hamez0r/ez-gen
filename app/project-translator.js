@@ -55,7 +55,7 @@ function Translator(fileSystem, cmakeFormatter, pathRepository) {
 Translator.prototype = {
   translateExternalProject: function(project, using, dependencies) {
     let cmakeContents = ''
-    cmakeContents += this.formatter.getCMakeVersion(3.8)
+    cmakeContents += this.formatter.getCMakeVersion(2.8)
 
     let workDir = this.fileSystem.getCurrentDirectory()
     let projectName = project.name
