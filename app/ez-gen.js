@@ -71,12 +71,43 @@ EzGen.prototype = {
     let buildDir = pathRepository.getBuildDir(currentDir)
     fs.createDirectory(buildDir)
 
+    let configurations = new Map()
+    configurations.set('debug', 'Debug')
+    configurations.set('release', 'Release')
+
+    let configuration = ''
+    let configurationParameter = process.argv[2]
+    if (configurationParameter) {
+      configuration = configurations.get(configurationParameter.toLowerCase())
+    } else {
+      configuration = 'Release'
+    }
+    
     process.chdir(buildDir)
-    let child = exec('cmake ../build -G"Visual Studio 14 Win64', function (error, stdout, stderr) {
+    let cmakeCommand = new CMakeBuildCommand(configuration)
+    let child = exec(cmakeCommand.get(), function(error, stdout, stderr) {
       if (error !== null) {
         console.log('Could not properly run CMake: ' + error)
       }
     })
+  }
+}
+
+function CMakeBuildCommand(configuration) {
+  this.configuration = configuration
+
+  let buildSystems = new Map()
+  buildSystems.set('win32', `"Visual Studio 14 Win64"`)
+  buildSystems.set('linux', `"Unix Makefiles"`)
+  buildSystems.set('darwin', `"XCode"`)
+
+  this.buildSystems = buildSystems
+}
+
+CMakeBuildCommand.prototype = {
+  get: function() {
+    let buildSystem = this.buildSystems.get(process.platform)
+    return `cmake ../build -DCMAKE_BUILD_TYPE=${this.configuration} -G${buildSystem}`
   }
 }
 
