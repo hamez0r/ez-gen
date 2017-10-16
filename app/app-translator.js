@@ -20,7 +20,7 @@ Translator.prototype = {
   translate: function(app) {
     let cmakeContents = ''
 
-    cmakeContents += this.formatter.getCMakeVersion(3.6)
+    cmakeContents += this.formatter.getCMakeVersion(2.8)
     cmakeContents += this.formatter.getSuppressRegeneration()
     cmakeContents += this.formatter.getProjectDefinition(app.name)
 
