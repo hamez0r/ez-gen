@@ -26,7 +26,8 @@ EzGen.prototype = {
     let appProjects = []
     for (let projectDir of projectDirs) {
       let projectConfig = JSON.parse(fs.readProjectFile(projectDir))
-      appProjects.push(new Project(projectConfig, projectDir))
+      if (projectConfig.platform === process.platform)
+        appProjects.push(new Project(projectConfig, projectDir))
     }
 
     let platform = process.platform
