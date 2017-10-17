@@ -86,6 +86,7 @@ Translator.prototype = {
   translateCompilingProject: function(project, using, dependencies) {
     let cmakeContents = ''
     cmakeContents += this.formatter.getCMakeVersion(2.8)
+    cmakeContents += `add_compile_options(-std=c++11)\n`
     
     let projectDirs = this.includes.getProjectIncludeDirectories(project)
     for (let dir of projectDirs) {
