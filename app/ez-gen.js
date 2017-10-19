@@ -56,12 +56,17 @@ EzGen.prototype = {
 
     let projectTranslator = new ProjectTranslator(fs, cmakeFormatter, pathRepository)
     for (let project of appProjects) {
+      console.log(`Parsing project ${project.name}`)
+
       // Since there's nothing to do for ExternalStatic, we're not
       // sending it to the translator
       if (project.type === 'ExternalStatic') continue
 
       let using = app.getProjectUsing(project)
       let dependecies = app.getProjectDependencies(project)
+
+      console.log(`Projects used by ${project.name}: ${using}`)
+      console.log(`Dependencies used by ${project.name}: ${dependecies}`)
       cmakeLists.push(projectTranslator.translate(project, using, dependecies))
     }
 
