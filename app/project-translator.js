@@ -89,8 +89,8 @@ Translator.prototype = {
     // cmakeContents += `add_compile_options(-std=c++11)\n`
 
     if (process.platform !== 'win32') {
-      cmakeContents += `SET(CMAKE_SKIP_BUILD_RPATH TRUE)\n`
-      cmakeContents += `SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)\n`
+      //cmakeContents += `SET(CMAKE_SKIP_BUILD_RPATH TRUE)\n`
+      //cmakeContents += `SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)\n`
       cmakeContents += `SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)\n`
       cmakeContents += `SET(CMAKE_INSTALL_RPATH "$ORIGIN")\n`
       cmakeContents += 'SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -m64 -ldl")\n'
